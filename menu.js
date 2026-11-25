@@ -9,12 +9,15 @@
  *                            no dice que este plato use ese mismo proveedor; confirmar con cocina.
  *   foto / fotoMini          ruta prevista; si el archivo no existe, la ficha oculta la imagen sola.
  *   modelo                   ruta a un .glb para «Ver en su mesa»; vacío = sin botón.
+ *   modeloIos                ruta a un .usdz para iPhone/iPad (opcional; sin él, iOS no ofrece AR).
  */
 
-/* Configuración que completa el hotel. Vacío = el botón no navega y avisa en línea. */
+/* Configuración que completa el hotel. Vacío = ese botón no se muestra
+   (Google usa la búsqueda de la ficha en Maps hasta que haya enlace directo de reseña). */
 var CONFIG = {
   resenas: {
-    google: '',      // enlace "Escribir una reseña" de la ficha de Google
+    // Búsqueda de la ficha en Google Maps; cambiar por el enlace directo «Escribir una reseña» cuando el hotel lo pase.
+    google: 'https://www.google.com/maps/search/?api=1&query=Mora+Bistro+Argentino+Sheraton+Tucuman',
     tripadvisor: ''  // enlace "Escribir una opinión" de TripAdvisor
   },
   gerente: {
@@ -27,9 +30,9 @@ var CONFIG = {
 
 /* Horarios de la carta. Minutos desde 00:00; si `hasta` es menor que `desde`, cruza la medianoche. */
 var HORARIOS = [
-  { id: 'desayuno', desde: '06:30', hasta: '10:30', hastaFinde: '11:00', seccion: 'proximamente' },
-  { id: 'almuerzo', desde: '12:30', hasta: '16:00', seccion: 'tucuman' },
-  { id: 'cena', desde: '20:00', hasta: '00:30', seccion: 'tucuman' },
+  { id: 'desayuno', desde: '06:30', hasta: '10:30', hastaFinde: '11:00', seccion: '' }, // sin carta propia todavía: «Ahora» muestra sólo el horario
+  { id: 'almuerzo', desde: '12:30', hasta: '16:00', seccion: 'menu' },
+  { id: 'cena', desde: '20:00', hasta: '00:30', seccion: 'menu' },
   { id: 'lobby', desde: '08:00', hasta: '02:00', seccion: 'bebidas' },
   { id: 'room', desde: '16:00', hasta: '03:00', seccion: 'entradas', verificar: true } // carta: «aprox.»
 ];
@@ -109,7 +112,7 @@ var MENU_PASOS = {
       pt: 'Filé mignon em crosta de limão, risoto de trigo e molho de Malbec de altitude com mirtilos.'
     },
     {
-      id: 'paso-4', origen: ['trancas'], ig_extra: true, foto: 'fotos/cheesecake.jpg', fotoMini: 'fotos/cheesecake-s.jpg', modelo: 'modelos/torta-zanahoria-nueces.glb', modeloIos: 'modelos/torta-zanahoria-nueces.usdz', // modelo de ejemplo (torta de nueces), reemplazar por el plato real
+      id: 'paso-4', origen: ['trancas'], ig_extra: true, modelo: '',
       es: 'Cheesecake de cayote y nueces, con miel de caña IG.',
       en: 'Cayote and walnut cheesecake with sugar-cane honey (PGI). Cayote is an Andean squash traditionally candied in the north.',
       pt: 'Cheesecake de caiote e nozes, com melado de cana (IG). O caiote é uma abóbora andina, tradicionalmente cristalizada no norte.'
@@ -119,9 +122,7 @@ var MENU_PASOS = {
     es: 'Incluye una copa de vino de bodegas tucumanas de los Valles Calchaquíes (Finca la Orilla, Los Zazos, Río de Arena) y una bebida sin alcohol.',
     en: 'Includes a glass of wine from Tucumán wineries in the Calchaquí Valleys (Finca la Orilla, Los Zazos, Río de Arena) and a soft drink.',
     pt: 'Inclui uma taça de vinho de vinícolas tucumanas dos Vales Calchaquíes (Finca la Orilla, Los Zazos, Río de Arena) e uma bebida sem álcool.'
-  },
-  fotoAmbiente: 'fotos/paisaje-tucuman.jpg',
-  fotoCopa: 'fotos/copa-de-vino.jpg'
+  }
 };
 
 /* Maridajes por estilo (sin etiquetas). Todos maridaje_propuesto: true. */
@@ -142,7 +143,7 @@ var SECCIONES = [
     id: 'entradas',
     titulo: { es: 'Entradas', en: 'Starters', pt: 'Entradas' },
     items: [
-      { id: 'empanada-carne', precio: 4800, foto: 'fotos/empanadas.jpg', fotoMini: 'fotos/empanadas-s.jpg', modelo: '',
+      { id: 'empanada-carne', precio: 4800, modelo: '',
         nombre: { es: 'Empanada de carne', en: 'Beef empanada', pt: 'Empanada de carne' },
         desc: { es: '', en: 'The classic Argentine filled pastry.', pt: 'O clássico salgado recheado argentino.' } },
       { id: 'empanada-pollo', precio: 4800,
@@ -262,7 +263,7 @@ var SECCIONES = [
         desc: { es: 'Con risotto de leche y salsa cítrica.',
                 en: 'With a creamy milk risotto and citrus sauce.',
                 pt: 'Com risoto ao leite e molho cítrico.' } },
-      { id: 'ojo-de-bife', precio: 42000, foto: 'fotos/ojo-de-bife.jpg', fotoMini: 'fotos/ojo-de-bife-s.jpg', modelo: '',
+      { id: 'ojo-de-bife', precio: 42000, modelo: 'modelos/ojo-de-bife.glb',
         maridaje: M.malbec, maridaje_propuesto: true,
         nombre: { es: 'Ojo de bife', en: 'Ribeye steak', pt: 'Bife ancho' },
         desc: { es: 'Con chimichurri y verduras grilladas.',
@@ -273,13 +274,13 @@ var SECCIONES = [
         desc: { es: 'Lomo en dados, vegetales, salchichas estilo alemán, papas y huevo.',
                 en: 'Diced tenderloin, vegetables, German-style sausages, potatoes and egg.',
                 pt: 'Filé em cubos, legumes, salsichas tipo alemãs, batatas e ovo.' } },
-      { id: 't-bone', precio: 79000, tags: ['compartir'], foto: 'fotos/t-bone.jpg', fotoMini: 'fotos/t-bone-s.jpg', modelo: '',
+      { id: 't-bone', precio: 79000, tags: ['compartir'], foto: 'fotos/t-bone.jpg', fotoMini: 'fotos/t-bone-s.jpg', modelo: 'modelos/t-bone.glb',
         maridaje: M.cabernet, maridaje_propuesto: true,
         nombre: { es: 'T-bone', en: 'T-bone steak', pt: 'T-bone' },
         desc: { es: 'Para compartir. Con papas, vegetales y huevo.',
                 en: 'To share. With potatoes, vegetables and egg.',
                 pt: 'Para compartilhar. Com batatas, legumes e ovo.' } },
-      { id: 'tomahawk', precio: 80000, tags: ['compartir'], foto: 'fotos/tomahawk.jpg', fotoMini: 'fotos/tomahawk-s.jpg', modelo: '',
+      { id: 'tomahawk', precio: 80000, tags: ['compartir'], modelo: 'modelos/tomahawk.glb', modeloIos: 'modelos/tomahawk.usdz',
         maridaje: M.blend, maridaje_propuesto: true,
         nombre: { es: 'Tomahawk', en: 'Tomahawk steak', pt: 'Tomahawk' },
         desc: { es: 'Para compartir. Con papas y vegetales.',
@@ -291,7 +292,7 @@ var SECCIONES = [
     id: 'compartir',
     titulo: { es: 'Para compartir', en: 'To share', pt: 'Para compartilhar' },
     items: [
-      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos-embutidos.jpg', fotoMini: 'fotos/tabla-quesos-embutidos-s.jpg', modelo: '',
+      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos-embutidos.jpg', fotoMini: 'fotos/tabla-quesos-embutidos-s.jpg', modelo: 'modelos/tabla-quesos.glb',
         maridaje: M.torrontes, maridaje_propuesto: true,
         nombre: { es: 'Tabla de quesos y embutidos regionales', en: 'Regional cheese and cold cuts board', pt: 'Tábua de queijos e frios regionais' },
         desc: { es: '', en: '', pt: '' } }
@@ -305,7 +306,7 @@ var SECCIONES = [
       { id: 'risotto-espinaca', precio: 18000, tags: ['vegano'],
         nombre: { es: 'Risotto de espinaca y vegetales', en: 'Spinach and vegetable risotto', pt: 'Risoto de espinafre e legumes' },
         desc: { es: '', en: '', pt: '' } },
-      { id: 'sorrentinos-jamon', precio: 17000, foto: 'fotos/sorrentinos.jpg', fotoMini: 'fotos/sorrentinos-s.jpg', modelo: '',
+      { id: 'sorrentinos-jamon', precio: 17000, modelo: '',
         nombre: { es: 'Sorrentinos de jamón y queso', en: 'Ham and cheese sorrentinos', pt: 'Sorrentinos de presunto e queijo' },
         desc: { es: 'Con salsa rosa de remolacha y zanahoria.',
                 en: 'Large round filled pasta, an Argentine favourite, with a beetroot and carrot rosé sauce.',
@@ -395,13 +396,6 @@ var BEBIDAS = {
   ]
 };
 
-var PROXIMAMENTE = [
-  { id: 'postres', es: 'Postres', en: 'Desserts', pt: 'Sobremesas' },
-  { id: 'vinos', es: 'Carta de vinos', en: 'Wine list', pt: 'Carta de vinhos', foto: 'fotos/copa-de-vino.jpg' },
-  { id: 'cafeteria', es: 'Cafetería', en: 'Coffee', pt: 'Cafeteria' },
-  { id: 'desayuno', es: 'Desayuno', en: 'Breakfast', pt: 'Café da manhã' }
-];
-
 /* Textos de la interfaz. */
 var TEXTOS = {
   es: {
@@ -415,21 +409,20 @@ var TEXTOS = {
     filtros: 'Filtrar la carta', sintacc: 'Sin TACC', vegano: 'Vegano', compartir: 'Para compartir',
     filtroVacio: 'Ningún plato de esta sección coincide con el filtro.', limpiar: 'Quitar filtros',
     resultados: function (n) { return n === 1 ? '1 plato' : n + ' platos'; },
-    navTucuman: 'Tucumán', navBebidas: 'Bebidas', navProx: 'Próximamente',
-    tucumanTitulo: 'Tucumán a la carta', tucumanBajada: 'Menú de pasos · temporada de invierno',
+    navTucuman: 'Menú de pasos', navBebidas: 'Bebidas',
+    tucumanTitulo: 'Menú de pasos', tucumanBajada: 'Tucumán a la carta',
     tucumanIntro: 'Cuatro pasos para recorrer la provincia desde la mesa: cada producto llega de un departamento de Tucumán.',
-    paso: 'Paso', porPersona: 'por persona', mapaTitulo: 'Productos y origen',
+    paso: 'Paso', porPersona: 'por persona', mapaTitulo: 'Productos y origen', origenToggle: 'Origen de los productos',
     mapaAyuda: 'Toque un departamento resaltado para ver qué llega de allí.',
     mapaLista: 'Departamentos con producto', mapaVacio: 'Elija un departamento del mapa o de la lista.',
     mapaPlatos: 'En la carta', mapaPasos: 'En el menú de pasos', ig: 'IG', igLargo: 'Identificación geográfica',
     sinDepto: 'La miel de caña IG figura en la carta sin departamento.',
-    origen: 'Origen', maridaje: 'Copa sugerida', verEnSuMesa: 'Ver en su mesa', ilustrativa: 'Imagen ilustrativa',
-    prox: 'Próximamente', proxTexto: 'Estamos preparando estas cartas. Consulte a su mozo mientras tanto.',
+    origen: 'Origen', maridaje: 'Copa sugerida', verEnSuMesa: 'Ver en su mesa', modeloIlustrativo: 'Modelo ilustrativo', ilustrativa: 'Imagen ilustrativa',
     falasco: 'Con la compañía de Falasco Wines.',
     resenasTitulo: '¿Cómo estuvo su visita?', resenasTexto: 'Su opinión nos ayuda a cuidar cada detalle.',
-    google: 'Escribir en Google', tripadvisor: 'Escribir en TripAdvisor',
+    google: 'Opinar en Google', tripadvisor: 'Opinar en TripAdvisor', creditos: 'Créditos',
     gerenteTitulo: 'Hablar con el gerente', gerenteTexto: 'Si algo no estuvo a la altura, escríbanos en privado.',
-    email: 'Correo', whatsapp: 'WhatsApp', pendiente: 'Enlace pendiente: el hotel todavía no lo cargó.',
+    email: 'Correo', whatsapp: 'WhatsApp',
     horarios: 'Horarios', lav: 'Lunes a viernes', finde: 'Sábados, domingos y feriados', aprox: 'aprox.',
     direccion: 'Dirección', legal: 'Cubierto $1.000 · Precios en pesos argentinos · IVA incluido',
     instagram: 'Instagram', pasosNota: 'Precio por persona.', volverArriba: 'Volver al inicio'
@@ -445,21 +438,20 @@ var TEXTOS = {
     filtros: 'Filter the menu', sintacc: 'Gluten-free', vegano: 'Vegan', compartir: 'To share',
     filtroVacio: 'No dishes in this section match the filter.', limpiar: 'Clear filters',
     resultados: function (n) { return n === 1 ? '1 dish' : n + ' dishes'; },
-    navTucuman: 'Tucumán', navBebidas: 'Drinks', navProx: 'Coming soon',
-    tucumanTitulo: 'Tucumán à la carte', tucumanBajada: 'Tasting menu · winter season',
+    navTucuman: 'Tasting menu', navBebidas: 'Drinks',
+    tucumanTitulo: 'Tasting menu', tucumanBajada: 'Tucumán a la carta',
     tucumanIntro: 'Four courses that travel across the province: every product comes from a department of Tucumán.',
-    paso: 'Course', porPersona: 'per person', mapaTitulo: 'Produce and origin',
+    paso: 'Course', porPersona: 'per person', mapaTitulo: 'Produce and origin', origenToggle: 'Origin of the produce',
     mapaAyuda: 'Tap a highlighted department to see what comes from there.',
     mapaLista: 'Departments with produce', mapaVacio: 'Choose a department on the map or in the list.',
     mapaPlatos: 'On the menu', mapaPasos: 'In the tasting menu', ig: 'PGI', igLargo: 'Protected geographical indication',
     sinDepto: 'Sugar-cane honey (PGI) appears on the menu without a department.',
-    origen: 'Origin', maridaje: 'Suggested glass', verEnSuMesa: 'See it on your table', ilustrativa: 'Illustrative image',
-    prox: 'Coming soon', proxTexto: 'These menus are being prepared. Please ask your server in the meantime.',
+    origen: 'Origin', maridaje: 'Suggested glass', verEnSuMesa: 'See it on your table', modeloIlustrativo: 'Illustrative model', ilustrativa: 'Illustrative image',
     falasco: 'In the company of Falasco Wines.',
     resenasTitulo: 'How was your visit?', resenasTexto: 'Your feedback helps us look after every detail.',
-    google: 'Write on Google', tripadvisor: 'Write on TripAdvisor',
+    google: 'Review on Google', tripadvisor: 'Review on TripAdvisor', creditos: 'Credits',
     gerenteTitulo: 'Contact the manager', gerenteTexto: 'If anything fell short, write to us privately.',
-    email: 'Email', whatsapp: 'WhatsApp', pendiente: 'Link pending: the hotel has not added it yet.',
+    email: 'Email', whatsapp: 'WhatsApp',
     horarios: 'Opening hours', lav: 'Monday to Friday', finde: 'Saturdays, Sundays and holidays', aprox: 'approx.',
     direccion: 'Address', legal: 'Cover charge $1,000 · Prices in Argentine pesos · VAT included',
     instagram: 'Instagram', pasosNota: 'Price per person.', volverArriba: 'Back to top'
@@ -475,21 +467,20 @@ var TEXTOS = {
     filtros: 'Filtrar o cardápio', sintacc: 'Sem glúten', vegano: 'Vegano', compartir: 'Para compartilhar',
     filtroVacio: 'Nenhum prato desta seção corresponde ao filtro.', limpiar: 'Limpar filtros',
     resultados: function (n) { return n === 1 ? '1 prato' : n + ' pratos'; },
-    navTucuman: 'Tucumán', navBebidas: 'Bebidas', navProx: 'Em breve',
-    tucumanTitulo: 'Tucumán à la carte', tucumanBajada: 'Menu degustação · temporada de inverno',
+    navTucuman: 'Menu degustação', navBebidas: 'Bebidas',
+    tucumanTitulo: 'Menu degustação', tucumanBajada: 'Tucumán a la carta',
     tucumanIntro: 'Quatro etapas para percorrer a província à mesa: cada produto vem de um departamento de Tucumán.',
-    paso: 'Etapa', porPersona: 'por pessoa', mapaTitulo: 'Produtos e origem',
+    paso: 'Etapa', porPersona: 'por pessoa', mapaTitulo: 'Produtos e origem', origenToggle: 'Origem dos produtos',
     mapaAyuda: 'Toque um departamento destacado para ver o que vem de lá.',
     mapaLista: 'Departamentos com produto', mapaVacio: 'Escolha um departamento no mapa ou na lista.',
     mapaPlatos: 'No cardápio', mapaPasos: 'No menu degustação', ig: 'IG', igLargo: 'Indicação geográfica',
     sinDepto: 'O melado de cana (IG) aparece no cardápio sem departamento.',
-    origen: 'Origem', maridaje: 'Taça sugerida', verEnSuMesa: 'Ver na sua mesa', ilustrativa: 'Imagem ilustrativa',
-    prox: 'Em breve', proxTexto: 'Estamos preparando estes cardápios. Enquanto isso, consulte o garçom.',
+    origen: 'Origem', maridaje: 'Taça sugerida', verEnSuMesa: 'Ver na sua mesa', modeloIlustrativo: 'Modelo ilustrativo', ilustrativa: 'Imagem ilustrativa',
     falasco: 'Na companhia de Falasco Wines.',
     resenasTitulo: 'Como foi a sua visita?', resenasTexto: 'Sua opinião nos ajuda a cuidar de cada detalhe.',
-    google: 'Escrever no Google', tripadvisor: 'Escrever no TripAdvisor',
+    google: 'Avaliar no Google', tripadvisor: 'Avaliar no TripAdvisor', creditos: 'Créditos',
     gerenteTitulo: 'Falar com o gerente', gerenteTexto: 'Se algo não esteve à altura, escreva-nos em particular.',
-    email: 'E-mail', whatsapp: 'WhatsApp', pendiente: 'Link pendente: o hotel ainda não o cadastrou.',
+    email: 'E-mail', whatsapp: 'WhatsApp',
     horarios: 'Horários', lav: 'Segunda a sexta', finde: 'Sábados, domingos e feriados', aprox: 'aprox.',
     direccion: 'Endereço', legal: 'Couvert $1.000 · Preços em pesos argentinos · Impostos incluídos',
     instagram: 'Instagram', pasosNota: 'Preço por pessoa.', volverArriba: 'Voltar ao início'

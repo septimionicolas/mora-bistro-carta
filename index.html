@@ -8,19 +8,28 @@
   <meta name="description" content="Carta de Mora Bistró Argentino, en Sheraton Tucumán. Cocina tucumana de producto, en español, inglés y portugués.">
   <meta name="theme-color" content="#0E0C0B">
   <meta name="color-scheme" content="dark light">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mora Bistró Argentino · Carta">
+  <meta property="og:description" content="Carta de Mora Bistró Argentino, en Sheraton Tucumán. Cocina tucumana de producto.">
+  <meta property="og:image" content="https://septimionicolas.github.io/mora-bistro-carta/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo de Mora Bistró Argentino sobre fondo negro">
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" as="image" href="logo-mora.png">
   <style>
-    /* Loader de Mora: CSS crítico, se ve antes de cualquier script. Si el JS falla, se va solo a los 5 s. */
+    /* Loader de Mora: CSS crítico, se ve antes de cualquier script. Si el JS falla, se va solo a los 4 s. */
     #mora-loader {
       position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
       background-color: #0A0807; color: #F3EEE4;
       transition: background-color 700ms ease, opacity 500ms ease, visibility 0s linear 0s;
-      animation: loaderFuera .6s ease 5s forwards !important;
+      animation: loaderFuera .6s ease 4s forwards !important;
     }
     @keyframes loaderFuera { to { opacity: 0; visibility: hidden; pointer-events: none; } }
-    .loader-centro { display: flex; flex-direction: column; align-items: center; width: min(78vw, 420px); }
+    .loader-centro { display: flex; flex-direction: column; align-items: center; width: min(80vw, 520px); }
     .loader-logo {
-      position: relative; width: 100%; aspect-ratio: 900 / 336; background: rgba(243, 238, 228, .07);
+      position: relative; width: 100%; aspect-ratio: 1800 / 635; background: rgba(243, 238, 228, .07);
       -webkit-mask: url("logo-mora.png") center / contain no-repeat; mask: url("logo-mora.png") center / contain no-repeat;
       transform-origin: 0 0; will-change: transform;
     }
@@ -50,11 +59,8 @@
       opacity: 0; animation: loaderAparece .9s ease .85s forwards; transition: opacity 400ms ease;
     }
     @keyframes loaderAparece { to { opacity: 1; } }
-    .loader-hotel:empty { display: none; }
-    .loader-hotel { margin-top: 14px; height: 28px; }
-    .loader-hotel svg { height: 100%; width: auto; }
     #mora-loader.sale { background-color: rgba(10, 8, 7, 0); pointer-events: none; }
-    #mora-loader.sale .loader-linea, #mora-loader.sale .loader-texto, #mora-loader.sale .loader-hotel { opacity: 0; animation: none; transition: opacity 300ms ease; }
+    #mora-loader.sale .loader-linea, #mora-loader.sale .loader-texto { opacity: 0; animation: none; transition: opacity 300ms ease; }
     /* al salir el trazo queda completo aunque el barrido no haya terminado */
     #mora-loader.sale .loader-tinta { animation: none; clip-path: none; }
     #mora-loader.sale .loader-luz { display: none; }
@@ -89,8 +95,6 @@
   <script src="mapa.js" defer></script>
   <script src="ar.js" defer></script>
   <script src="app.js" defer></script>
-  <script src="destacados.js" defer></script>
-  <script src="portada.js" defer></script>
   <script src="movimiento.js" defer></script>
   <script src="fondo.js" defer></script>
 </head>
@@ -100,13 +104,11 @@
       <div class="loader-logo"><span class="loader-tinta"></span><span class="loader-luz"></span></div>
       <div class="loader-linea"><i></i></div>
       <p class="loader-texto">en Sheraton Tucumán</p>
-      <!-- lugar para el logo oficial del hotel cuando lo entreguen -->
-      <div class="loader-hotel"></div>
     </div>
   </div>
   <script>
-    /* Loader: se va cuando carga el primer modelo 3D de la portada (mora:modelo-listo), nunca antes de 1,4 s
-       ni después de 3,5 s. ?loader=0 lo saltea. Al salir, el logo viaja a su lugar en la portada. */
+    /* Loader: se va cuando están listas las fuentes y el logo, nunca antes de 1,2 s ni después de 2,5 s.
+       ?loader=0 lo saltea. Al salir, el logo viaja a su lugar en la portada. */
     (function () {
       var el = document.getElementById('mora-loader'), raiz = document.documentElement;
       var q = new URLSearchParams(location.search);
@@ -117,7 +119,7 @@
       var pre = { en: 'at', pt: 'no' }[lang];
       if (pre) el.querySelector('.loader-texto').textContent = pre + ' Sheraton Tucumán';
       raiz.classList.add('cargando-mora');
-      var t0 = Date.now(), MIN = 1400, MAX = 3500, hecho = false;
+      var t0 = Date.now(), MIN = 1200, MAX = 2500, hecho = false;
       var reducido = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       function quitar() {
         raiz.classList.remove('logo-en-vuelo');
@@ -142,8 +144,11 @@
         }
       }
       function listo() { setTimeout(salir, Math.max(0, MIN - (Date.now() - t0))); }
-      document.addEventListener('mora:modelo-listo', listo);
-      if (window.__moraModeloListo) listo();
+      var fuentes = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      var logoListo = new Promise(function (ok) {
+        var img = new Image(); img.onload = img.onerror = ok; img.src = 'logo-mora.png';
+      });
+      Promise.all([fuentes, logoListo]).then(listo, listo);
       setTimeout(salir, MAX);
     })();
   </script>
@@ -164,33 +169,10 @@
 
     <div class="portada-marca">
       <h1 class="portada-logo"><span class="logo" role="img" aria-label="Mora Bistró Argentino"></span></h1>
-      <p class="portada-bajada">Bistró argentino <span aria-hidden="true">·</span> Sheraton Tucumán</p>
+      <p class="portada-bajada">en Sheraton Tucumán</p>
     </div>
 
-    <section class="destacados" id="destacados" aria-roledescription="carrusel" aria-label="Productos destacados">
-      <div class="escena">
-        <div class="halo" aria-hidden="true"></div>
-        <div class="pedestal" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="visor"></div>
-        <div class="anillo-carga" aria-hidden="true"></div>
-        <button type="button" class="flecha flecha-ant" aria-label="Destacado anterior"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5 L8 12 L15 19" /></svg></button>
-        <button type="button" class="flecha flecha-sig" aria-label="Destacado siguiente"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5 L16 12 L9 19" /></svg></button>
-        <p class="ilustrativo">Modelo ilustrativo</p>
-      </div>
-      <div class="ficha" role="group" aria-roledescription="destacado" aria-live="polite">
-        <p class="ficha-origen"></p>
-        <h2 class="ficha-nombre"></h2>
-        <p class="ficha-linea"></p>
-        <div class="ficha-botones">
-          <a class="btn btn-carta" href="#carta">Ver en la carta</a>
-          <button type="button" class="btn btn-mesa" hidden>Ver en su mesa</button>
-        </div>
-      </div>
-      <div class="carrusel-puntos"></div>
-    </section>
-
     <p class="ahora" id="ahora" aria-live="polite"></p>
-    <a class="bajar" href="#menu" aria-label="Ir a la carta" tabindex="-1"></a>
   </header>
 
   <nav class="nav" id="nav" aria-label="Secciones de la carta">

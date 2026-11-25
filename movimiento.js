@@ -6,7 +6,7 @@
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   if (!('IntersectionObserver' in window) || (mq && mq.matches)) return;
 
-  var BLANCOS = '.seccion-cabeza, .plato, .paso, .foto, .mapa, .pie-bloque, .pasos-precio, .prox-lista li';
+  var BLANCOS = '.seccion-cabeza, .plato, .paso, .foto, .mapa, .pie-bloque, .pasos-precio';
   raiz.classList.add('mov');
 
   var pendientes = [];

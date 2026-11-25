@@ -1,18 +1,10 @@
 [
   {
-    "plato": "Empanadas",
-    "archivo": "fotos/empanadas.jpg",
-    "mini": "fotos/empanadas-s.jpg",
-    "ancho": 960,
-    "alto": 1200,
-    "ilustrativa": true
-  },
-  {
     "plato": "Crema de calabaza asada",
     "archivo": "fotos/sopa-crema-de-calabaza.jpg",
     "mini": "fotos/sopa-crema-de-calabaza-s.jpg",
-    "ancho": 960,
-    "alto": 1200,
+    "ancho": 1200,
+    "alto": 900,
     "ilustrativa": true
   },
   {
@@ -20,23 +12,7 @@
     "archivo": "fotos/ensalada-caesar.jpg",
     "mini": "fotos/ensalada-caesar-s.jpg",
     "ancho": 1200,
-    "alto": 800,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Ojo de bife con chimichurri",
-    "archivo": "fotos/ojo-de-bife.jpg",
-    "mini": "fotos/ojo-de-bife-s.jpg",
-    "ancho": 1200,
-    "alto": 800,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Tomahawk",
-    "archivo": "fotos/tomahawk.jpg",
-    "mini": "fotos/tomahawk-s.jpg",
-    "ancho": 1200,
-    "alto": 800,
+    "alto": 900,
     "ilustrativa": true
   },
   {
@@ -44,7 +20,7 @@
     "archivo": "fotos/t-bone.jpg",
     "mini": "fotos/t-bone-s.jpg",
     "ancho": 1200,
-    "alto": 1112,
+    "alto": 900,
     "ilustrativa": true
   },
   {
@@ -52,7 +28,7 @@
     "archivo": "fotos/salmon-rosado.jpg",
     "mini": "fotos/salmon-rosado-s.jpg",
     "ancho": 1200,
-    "alto": 800,
+    "alto": 900,
     "ilustrativa": true
   },
   {
@@ -60,15 +36,7 @@
     "archivo": "fotos/costillar.jpg",
     "mini": "fotos/costillar-s.jpg",
     "ancho": 1200,
-    "alto": 960,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Sorrentinos",
-    "archivo": "fotos/sorrentinos.jpg",
-    "mini": "fotos/sorrentinos-s.jpg",
-    "ancho": 1200,
-    "alto": 800,
+    "alto": 900,
     "ilustrativa": true
   },
   {
@@ -76,39 +44,15 @@
     "archivo": "fotos/risotto-de-mar.jpg",
     "mini": "fotos/risotto-de-mar-s.jpg",
     "ancho": 1200,
-    "alto": 857,
+    "alto": 900,
     "ilustrativa": true
   },
   {
     "plato": "Tabla de quesos y embutidos regionales",
     "archivo": "fotos/tabla-quesos-embutidos.jpg",
     "mini": "fotos/tabla-quesos-embutidos-s.jpg",
-    "ancho": 887,
-    "alto": 1200,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Cheesecake de cayote y nueces",
-    "archivo": "fotos/cheesecake.jpg",
-    "mini": "fotos/cheesecake-s.jpg",
     "ancho": 1200,
-    "alto": 799,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Copa de vino tinto (ambientación)",
-    "archivo": "fotos/copa-de-vino.jpg",
-    "mini": "fotos/copa-de-vino-s.jpg",
-    "ancho": 857,
-    "alto": 1200,
-    "ilustrativa": true
-  },
-  {
-    "plato": "Cerros de Tucumán (ambientación)",
-    "archivo": "fotos/paisaje-tucuman.jpg",
-    "mini": "fotos/paisaje-tucuman-s.jpg",
-    "ancho": 1200,
-    "alto": 675,
+    "alto": 900,
     "ilustrativa": true
   }
 ]

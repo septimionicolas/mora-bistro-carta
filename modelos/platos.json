@@ -1,0 +1,54 @@
+[
+  {
+    "id": "tomahawk",
+    "hero": null,
+    "archivo": "modelos/tomahawk.glb",
+    "usdz": "modelos/tomahawk.usdz",
+    "que_es": "Costilla de res grillada con hueso, entera, sobre tabla de madera",
+    "plato_carta": "Tomahawk",
+    "diferencias": "Hueso corto (no es el hueso largo del tomahawk); sin guarnición; tabla en vez de plato",
+    "licencia": "CC BY 4.0",
+    "autor": "alban",
+    "url": "https://sketchfab.com/3d-models/0d72ef49ea764361a865207e4d0d8252",
+    "orbita_sugerida": "30deg 60deg 120%"
+  },
+  {
+    "id": "ojo-de-bife",
+    "hero": null,
+    "archivo": "modelos/ojo-de-bife.glb",
+    "usdz": null,
+    "que_es": "Corte de res asado entero sobre tabla de madera",
+    "plato_carta": "Ojo de bife",
+    "diferencias": "Es una pieza de asado (prime rib), más alta que un bife; sin guarnición; tabla",
+    "licencia": "CC BY 4.0",
+    "autor": "alban",
+    "url": "https://sketchfab.com/3d-models/d072bd200267477eba8367ee3a62e686",
+    "orbita_sugerida": "30deg 60deg 120%"
+  },
+  {
+    "id": "t-bone",
+    "hero": null,
+    "archivo": "modelos/t-bone.glb",
+    "usdz": null,
+    "que_es": "Bife a la florentina (T-bone) cortado en tiras jugosas en plato blanco",
+    "plato_carta": "T-bone",
+    "diferencias": "Viene feteado, no entero; sin guarnición. Sin versión hero (la malla no baja de 2,8 MB)",
+    "licencia": "CC BY 4.0",
+    "autor": "shahriyarshahrab",
+    "url": "https://sketchfab.com/3d-models/969285ae788c41cd914387cecf088708",
+    "orbita_sugerida": "30deg 60deg 120%"
+  },
+  {
+    "id": "tabla-quesos",
+    "hero": null,
+    "archivo": "modelos/tabla-quesos.glb",
+    "usdz": null,
+    "que_es": "Tabla de madera con quesos variados, brie y uvas",
+    "plato_carta": "Tabla de quesos",
+    "diferencias": "Quesos importados (cheddar, brie), sin fiambres; tabla chica",
+    "licencia": "CC BY 4.0",
+    "autor": "edemaistre",
+    "url": "https://sketchfab.com/3d-models/1eec8ed7b73b4b9f869a1eb1c743f1ce",
+    "orbita_sugerida": "30deg 60deg 120%"
+  }
+]

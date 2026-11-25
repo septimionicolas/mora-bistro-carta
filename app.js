@@ -4,7 +4,7 @@
 
   var IDIOMAS = ['es', 'en', 'pt'];
   var params = new URLSearchParams(location.search);
-  var estado = { lang: 'es', tema: 'oscuro', filtros: [], depto: null };
+  var estado = { lang: 'es', tema: 'oscuro', filtros: [], depto: null, mapaAbierto: false };
 
   /* ---------- utilidades ---------- */
   function guardar(clave, valor) { try { localStorage.setItem(clave, valor); } catch (e) { /* modo privado */ } }
@@ -24,11 +24,14 @@
   var ROMANOS = ['I', 'II', 'III', 'IV'];
   /* Textos del índice «La carta» (la interfaz; los datos de menu.js no se tocan). */
   var TEXTOS_INDICE = {
-    es: { navCarta: 'Carta', titulo: 'La carta', bajada: 'Elija por dónde empezar', marca: 'Bistró argentino', saltar: 'Ir a la carta', pasos: 'Menú de 4 pasos', prox: 'Próximamente',
+    es: { navCarta: 'Carta', titulo: 'La carta', bajada: 'Elija por dónde empezar', saltar: 'Ir a la carta', pasos: '4 pasos',
+      en: 'en', tresD: 'Algunos platos se pueden ver en 3D sobre su mesa: busque «Ver en su mesa».',
       platos: function (n) { return n === 1 ? '1 plato' : n + ' platos'; }, bebidas: function (n) { return n + ' bebidas'; } },
-    en: { navCarta: 'Menu', titulo: 'The menu', bajada: 'Choose where to begin', marca: 'Argentine bistro', saltar: 'Skip to the menu', pasos: '4-course menu', prox: 'Coming soon',
+    en: { navCarta: 'Menu', titulo: 'The menu', bajada: 'Choose where to begin', saltar: 'Skip to the menu', pasos: '4 courses',
+      en: 'at', tresD: 'Some dishes can be viewed in 3D on your table: look for «See it on your table».',
       platos: function (n) { return n === 1 ? '1 dish' : n + ' dishes'; }, bebidas: function (n) { return n + ' drinks'; } },
-    pt: { navCarta: 'Cardápio', titulo: 'O cardápio', bajada: 'Escolha por onde começar', marca: 'Bistrô argentino', saltar: 'Ir ao cardápio', pasos: 'Menu de 4 passos', prox: 'Em breve',
+    pt: { navCarta: 'Cardápio', titulo: 'O cardápio', bajada: 'Escolha por onde começar', saltar: 'Ir ao cardápio', pasos: '4 etapas',
+      en: 'no', tresD: 'Alguns pratos podem ser vistos em 3D na sua mesa: procure «Ver na sua mesa».',
       platos: function (n) { return n === 1 ? '1 prato' : n + ' pratos'; }, bebidas: function (n) { return n + ' bebidas'; } }
   };
   function ti(clave) { return TEXTOS_INDICE[estado.lang][clave]; }
@@ -119,11 +122,11 @@
       '<circle cx="70" cy="6" r="1" /><circle cx="90" cy="6" r="1" /></svg>';
   }
 
-  function foto(src, mini, alt, clase) {
+  function foto(src, mini, alt) {
     if (!src) return '';
-    return '<figure class="foto ' + (clase || '') + '">' +
-      '<span class="foto-marco"><img src="' + esc(mini || src) + '"' + (mini ? ' srcset="' + esc(mini) + ' 600w, ' + esc(src) + ' 1400w" sizes="(min-width: 720px) 640px, 100vw"' : '') +
-      ' width="1400" height="1050" loading="lazy" decoding="async" alt="' + esc(alt) + '"' +
+    return '<figure class="foto">' +
+      '<span class="foto-marco"><img src="' + esc(mini || src) + '"' + (mini ? ' srcset="' + esc(mini) + ' 640w, ' + esc(src) + ' 1200w" sizes="(min-width: 720px) 640px, 100vw"' : '') +
+      ' width="1200" height="900" loading="lazy" decoding="async" alt="' + esc(alt) + '"' +
       ' onerror="this.closest(\'figure\').hidden=true"></span>' +
       '<figcaption>' + esc(t('ilustrativa')) + '</figcaption></figure>';
   }
@@ -134,10 +137,6 @@
       '" data-titulo="' + esc(titulo) + '">' + esc(t('verEnSuMesa')) + '</button>';
   }
 
-  function nombresOrigen(ids) {
-    return ids.map(function (id) { return NOMBRES_DEPTO[id]; }).join(' · ');
-  }
-
   function etiquetas(item) {
     return (item.tags || []).map(function (tag) {
       return '<li class="tag tag-' + tag + '">' + esc(t(tag)) + '</li>';
@@ -146,15 +145,13 @@
 
   function plato(item) {
     var nombre = tr(item.nombre), desc = tr(item.desc);
-    var origen = item.origen && !item.origen_confirmar
-      ? '<p class="origen">' + esc(t('origen')) + ': <a href="#mapa" data-depto="' + esc(item.origen[0]) + '">' + esc(nombresOrigen(item.origen)) + '</a></p>' : '';
     var maridaje = item.maridaje ? '<p class="maridaje">' + esc(t('maridaje')) + ': ' + esc(tr(item.maridaje)) + '</p>' : '';
     var tags = etiquetas(item);
     return '<li class="plato" id="plato-' + esc(item.id) + '" data-tags="' + esc((item.tags || []).join(' ')) + '">' +
       '<div class="plato-linea"><h3 class="plato-nombre">' + esc(nombre) + '</h3>' +
       '<span class="puntos" aria-hidden="true"></span><span class="precio">' + precio(item.precio) + '</span></div>' +
       (desc ? '<p class="plato-desc">' + esc(desc) + '</p>' : '') +
-      (tags ? '<ul class="tags">' + tags + '</ul>' : '') + origen + maridaje +
+      (tags ? '<ul class="tags">' + tags + '</ul>' : '') + maridaje +
       foto(item.foto, item.fotoMini, nombre) + botonAR(item, nombre) + '</li>';
   }
 
@@ -178,15 +175,7 @@
       }).join('') + '</section>';
   }
 
-  function proximamente() {
-    return '<section class="seccion proximamente" id="proximamente" aria-labelledby="t-prox">' +
-      '<header class="seccion-cabeza">' + ornamento() + '<h2 id="t-prox" class="titulo-script">' + esc(t('prox')) + '</h2></header>' +
-      '<p class="nota-centro">' + esc(t('proxTexto')) + '</p><ul class="prox-lista">' +
-      PROXIMAMENTE.map(function (p) { return '<li id="prox-' + p.id + '">' + esc(p[estado.lang]) + '</li>'; }).join('') +
-      '</ul></section>';
-  }
-
-  /* ---------- Tucumán a la carta ---------- */
+  /* ---------- Menú de pasos «Tucumán a la carta» ---------- */
   function platosDeDepto(id) {
     var lista = [];
     SECCIONES.forEach(function (s) {
@@ -239,30 +228,27 @@
   }
 
   function tucuman() {
-    var mp = MENU_PASOS;
+    var mp = MENU_PASOS, abierto = estado.mapaAbierto;
     var pasos = mp.pasos.map(function (p, i) {
       return '<li class="paso" id="' + p.id + '"><span class="paso-num" aria-hidden="true">' + ROMANOS[i] + '</span>' +
         '<div class="paso-cuerpo"><h3 class="paso-titulo">' + esc(t('paso')) + ' ' + ROMANOS[i] + '</h3>' +
-        '<p>' + esc(p[estado.lang]) + '</p>' +
-        '<p class="origen">' + esc(t('origen')) + ': ' + p.origen.map(function (d) {
-          return '<a href="#mapa" data-depto="' + d + '">' + esc(NOMBRES_DEPTO[d]) + '</a>';
-        }).join(' · ') + '</p>' + foto(p.foto, p.fotoMini, ROMANOS[i]) + botonAR(p, t('paso') + ' ' + ROMANOS[i]) + '</div></li>';
+        '<p>' + esc(p[estado.lang]) + '</p>' + foto(p.foto, p.fotoMini, ROMANOS[i]) + botonAR(p, t('paso') + ' ' + ROMANOS[i]) + '</div></li>';
     }).join('');
     var chips = Object.keys(ORIGENES).map(function (id) {
       return '<li><button type="button" class="chip" data-depto="' + id + '" aria-pressed="' + (estado.depto === id) + '">' +
         esc(NOMBRES_DEPTO[id]) + '</button></li>';
     }).join('');
     return '<section class="seccion tucuman" id="tucuman" aria-labelledby="t-tucuman">' +
-      foto(mp.fotoAmbiente, mp.fotoAmbiente.replace('.jpg', '-s.jpg'), 'Cerros de Tucumán', 'foto-ancha') +
       '<header class="seccion-cabeza">' + ornamento() +
+      '<h2 id="t-tucuman" class="titulo-script">' + esc(t('tucumanTitulo')) + '</h2>' +
       '<p class="sobretitulo">' + esc(t('tucumanBajada')) + '</p>' +
-      '<h2 id="t-tucuman" class="titulo-script titulo-grande">' + esc(t('tucumanTitulo')) + '</h2>' +
       '<p class="nota-centro">' + esc(t('tucumanIntro')) + '</p></header>' +
       '<ol class="pasos">' + pasos + '</ol>' +
       '<div class="pasos-precio"><span class="precio precio-grande">' + precio(mp.precio) + '</span> <span class="por-persona">' + esc(t('porPersona')) + '</span></div>' +
       '<p class="incluye" id="pasos-incluye">' + esc(mp.incluye[estado.lang]) + '</p>' +
-      foto(mp.fotoCopa, mp.fotoCopa.replace('.jpg', '-s.jpg'), '', 'foto-chica') +
-      '<div class="mapa" id="mapa"><h3 class="subtitulo">' + esc(t('mapaTitulo')) + '</h3>' +
+      '<p class="mapa-abrir"><button type="button" class="mapa-toggle" aria-expanded="' + !!abierto + '" aria-controls="mapa">' +
+      esc(t('origenToggle')) + '<span class="mapa-flecha" aria-hidden="true"></span></button></p>' +
+      '<div class="mapa" id="mapa"' + (abierto ? '' : ' hidden') + '><h3 class="subtitulo">' + esc(t('mapaTitulo')) + '</h3>' +
       '<p class="mapa-ayuda">' + esc(t('mapaAyuda')) + '</p>' +
       '<div class="mapa-cuerpo"><div class="mapa-dibujo">' + mapaSVG() + '</div>' +
       '<div class="mapa-lado"><ul class="chips" aria-label="' + esc(t('mapaLista')) + '">' + chips + '</ul>' +
@@ -270,8 +256,8 @@
       '<p class="mapa-nota">' + esc(t('sinDepto')) + '</p></div></section>';
   }
 
-  function elegirDepto(id, mover) {
-    estado.depto = estado.depto === id && !mover ? null : id;
+  function elegirDepto(id) {
+    estado.depto = estado.depto === id ? null : id;
     document.querySelectorAll('[data-depto].depto-activo, .chip[data-depto]').forEach(function (el) {
       var sel = el.getAttribute('data-depto') === estado.depto;
       el.setAttribute('aria-pressed', sel ? 'true' : 'false');
@@ -284,16 +270,16 @@
   function lineaAhora() {
     var a = servicioActual(), nombre = t('servicios')[a.s.id];
     if (a.abierto) {
-      return '<span class="ahora-etiqueta">' + esc(t('ahora')) + ':</span> ' + esc(nombre.toLowerCase()) + ' · ' + esc(t('hasta')) + ' ' + a.hasta +
-        ' <a class="ahora-link" href="#menu">' + esc(t('verServicio')) + '</a>';
+      var destino = a.s.seccion ? ' <a class="ahora-link" href="#' + a.s.seccion + '">' + esc(t('verServicio')) + '</a>' : '';
+      return '<span class="ahora-etiqueta">' + esc(t('ahora')) + ':</span> ' + esc(nombre.toLowerCase()) + ' · ' + esc(t('hasta')) + ' ' + a.hasta + destino;
     }
     return '<span class="ahora-etiqueta">' + esc(t('cerrado')) + '</span> · ' + esc(t('abre')) + ' ' + esc(nombre.toLowerCase()) + ' ' + a.s.desde;
   }
 
   function navItems() {
-    var items = [{ id: 'menu', txt: ti('navCarta') }, { id: 'tucuman', txt: t('navTucuman') }];
+    var items = [{ id: 'menu', txt: ti('navCarta') }];
     SECCIONES.forEach(function (s) { items.push({ id: s.id, txt: tr(s.titulo) }); });
-    items.push({ id: 'bebidas', txt: t('navBebidas') }, { id: 'proximamente', txt: t('navProx') });
+    items.push({ id: 'tucuman', txt: t('navTucuman') }, { id: 'bebidas', txt: t('navBebidas') });
     return items.map(function (i) { return '<li><a href="#' + i.id + '" data-nav="' + i.id + '">' + esc(i.txt) + '</a></li>'; }).join('');
   }
 
@@ -303,18 +289,18 @@
     return '';
   }
   function tarjeta(href, nombre, cuenta, mini, clase) {
-    var img = mini ? '<img src="' + esc(mini) + '" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.remove(\'con-foto\');this.remove()">' : '';
+    var img = mini ? '<img src="' + esc(mini) + '" alt="" width="640" height="480" loading="lazy" decoding="async" onerror="this.parentNode.classList.remove(\'con-foto\');this.remove()">' : '';
     return '<li class="' + (clase || '') + '"><a class="indice-tarjeta' + (mini ? ' con-foto' : '') + '" href="' + href + '">' + img +
       '<span class="indice-nombre">' + esc(nombre) + '</span><span class="indice-cuenta">' + esc(cuenta) + '</span></a></li>';
   }
   function indice() {
     var nBebidas = BEBIDAS.grupos.reduce(function (n, g) { return n + g.items.length; }, 0);
-    var html = tarjeta('#tucuman', t('tucumanTitulo'), ti('pasos') + ' · ' + precio(MENU_PASOS.precio), primeraFoto(MENU_PASOS.pasos), 'indice-destacada');
-    SECCIONES.forEach(function (s) { html += tarjeta('#' + s.id, tr(s.titulo), ti('platos')(s.items.length), primeraFoto(s.items)); });
-    html += tarjeta('#bebidas', tr(BEBIDAS.titulo), ti('bebidas')(nBebidas), '', 'indice-ancha');
-    PROXIMAMENTE.forEach(function (p) { html += tarjeta('#prox-' + p.id, p[estado.lang], ti('prox'), p.foto ? p.foto.replace(/\.jpg$/, '-s.jpg') : '', 'indice-prox'); });
+    var html = SECCIONES.map(function (s) { return tarjeta('#' + s.id, tr(s.titulo), ti('platos')(s.items.length), primeraFoto(s.items)); }).join('');
+    html += tarjeta('#tucuman', t('tucumanTitulo'), ti('pasos') + ' · ' + precio(MENU_PASOS.precio), primeraFoto(MENU_PASOS.pasos));
+    html += tarjeta('#bebidas', tr(BEBIDAS.titulo), ti('bebidas')(nBebidas), '');
     return '<header class="seccion-cabeza indice-cabeza">' + ornamento() + '<h2 id="t-menu" class="titulo-script">' + esc(ti('titulo')) + '</h2>' +
-      '<p class="indice-bajada">' + esc(ti('bajada')) + '</p></header><ul class="indice-grilla">' + html + '</ul>';
+      '<p class="indice-bajada">' + esc(ti('bajada')) + '</p></header><ul class="indice-grilla">' + html + '</ul>' +
+      '<p class="indice-3d"><span class="indice-3d-marca" aria-hidden="true">3D</span> ' + esc(ti('tresD')) + '</p>';
   }
 
   function filtros() {
@@ -338,16 +324,17 @@
       });
       total += visibles;
       var vacio = sec.querySelector('.sin-resultados');
-      if (vacio) vacio.hidden = !(activos.length && visibles === 0);
+      if (vacio) vacio.hidden = true;
+      sec.hidden = !!(activos.length && visibles === 0); /* sección sin coincidencias: se oculta entera */
     });
     var cuenta = $('.filtro-cuenta');
     if (cuenta) cuenta.innerHTML = activos.length ? esc(t('resultados')(total)) + ' · <button type="button" class="limpiar">' + esc(t('limpiar')) + '</button>' : '';
   }
 
   /* ---------- pie ---------- */
-  function enlaceOAviso(url, texto, clase) {
-    if (url) return '<a class="btn ' + clase + '" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(texto) + '</a>';
-    return '<button type="button" class="btn ' + clase + '" data-pendiente>' + esc(texto) + '</button>';
+  function enlace(url, texto, clase) {
+    if (!url) return '';
+    return '<a class="btn ' + clase + '" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(texto) + '</a>';
   }
 
   function pie() {
@@ -357,17 +344,16 @@
     return '<span class="logo logo-pie" role="img" aria-label="Mora Bistró Argentino"></span>' +
       '<div class="pie-bloque resenas"><h2 class="titulo-script">' + esc(t('resenasTitulo')) + '</h2>' +
       '<p>' + esc(t('resenasTexto')) + '</p><div class="botones">' +
-      enlaceOAviso(r.google, t('google'), 'btn-resena') + enlaceOAviso(r.tripadvisor, t('tripadvisor'), 'btn-resena') + '</div>' +
-      '<h3 class="subtitulo">' + esc(t('gerenteTitulo')) + '</h3><p>' + esc(t('gerenteTexto')) + '</p><div class="botones">' +
-      enlaceOAviso(mail, t('email'), 'btn-gerente') + enlaceOAviso(wa, t('whatsapp'), 'btn-gerente') + '</div>' +
-      '<p class="aviso" role="status" aria-live="polite" hidden>' + esc(t('pendiente')) + '</p></div>' +
+      enlace(r.google, t('google'), 'btn-resena') + enlace(r.tripadvisor, t('tripadvisor'), 'btn-resena') + '</div>' +
+      (mail || wa ? '<h3 class="subtitulo">' + esc(t('gerenteTitulo')) + '</h3><p>' + esc(t('gerenteTexto')) + '</p><div class="botones">' +
+        enlace(mail, t('email'), 'btn-gerente') + enlace(wa, t('whatsapp'), 'btn-gerente') + '</div>' : '') + '</div>' +
       ornamento() +
       '<div class="pie-bloque"><h3 class="subtitulo">' + esc(t('horarios')) + '</h3><dl class="horarios">' +
       '<dt>' + esc(t('servicios').desayuno) + '</dt><dd>' + esc(t('lav')) + ' ' + hs('06:30', '10:30') + '<br>' + esc(t('finde')) + ' ' + hs('06:30', '11:00') + '</dd>' +
       '<dt>' + esc(t('servicios').almuerzo) + '</dt><dd>' + hs('12:30', '16:00') + '</dd>' +
       '<dt>' + esc(t('servicios').cena) + '</dt><dd>' + hs('20:00', '00:30') + '</dd>' +
       '<dt>' + esc(t('servicios').lobby) + '</dt><dd>' + hs('08:00', '02:00') + '</dd>' +
-      '<dt>' + esc(t('servicios').room) + '</dt><dd>' + hs('16:00', '03:00') + ' (' + esc(t('aprox')) + ')</dd></dl></div>' +
+      '<dt>' + esc(t('servicios').room) + '</dt><dd>' + hs('16:00', '03:00')+ '</dd></dl></div>' +
       '<div class="pie-bloque"><h3 class="subtitulo">' + esc(t('direccion')) + '</h3><address>Mora Bistró Argentino<br>Sheraton Tucumán · Av. Soldati 440<br>San Miguel de Tucumán</address>' +
       '<p><a href="https://www.instagram.com/' + esc(CONFIG.instagram) + '/" target="_blank" rel="noopener">' + esc(t('instagram')) + ' @' + esc(CONFIG.instagram) + '</a></p>' +
       '<p class="falasco">' + esc(t('falasco')) + '</p></div>' +
@@ -375,7 +361,7 @@
       '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>' +
       '<span></span></button></p>' +
       '<p class="legal">' + esc(t('legal')) + '</p>' +
-      '<p class="legal"><a href="modelos/LICENCIAS.md">Modelos 3D</a> · <a href="fotos/CREDITOS.md">Fotos</a> · material ilustrativo, créditos y licencias</p>' +
+      '<p class="legal"><a href="creditos.html?lang=' + estado.lang + '">' + esc(t('creditos')) + '</a></p>' +
       '<p class="arriba"><a href="#inicio">' + esc(t('volverArriba')) + '</a></p>';
   }
 
@@ -395,12 +381,10 @@
     $('#nav').setAttribute('aria-label', t('navegacion'));
     $('#nav ul').innerHTML = navItems();
     $('#menu').innerHTML = indice();
-    var bajar = $('.bajar');
-    if (bajar) bajar.setAttribute('aria-label', ti('titulo'));
-    $('.portada-bajada').innerHTML = esc(ti('marca')) + ' <span aria-hidden="true">·</span> Sheraton Tucumán';
+    $('.portada-bajada').textContent = ti('en') + ' Sheraton Tucumán';
     $('.saltar').textContent = ti('saltar');
     $('#filtros').innerHTML = filtros();
-    $('#carta').innerHTML = tucuman() + SECCIONES.map(seccion).join('') + bebidas() + proximamente();
+    $('#carta').innerHTML = SECCIONES.map(seccion).join('') + tucuman() + bebidas();
     $('#pie').innerHTML = pie();
     aplicarTema();
     aplicarFiltros();
@@ -462,20 +446,16 @@
         document.querySelectorAll('.filtro').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
         aplicarFiltros(); return;
       }
-      if (el.hasAttribute('data-depto')) {
-        var desdeFuera = el.tagName === 'A';
-        if (desdeFuera) { ev.preventDefault(); $('#mapa').scrollIntoView({ behavior: reducido() ? 'auto' : 'smooth', block: 'start' }); }
-        elegirDepto(el.getAttribute('data-depto'), desdeFuera); return;
+      if (el.matches('.mapa-toggle')) {
+        estado.mapaAbierto = !estado.mapaAbierto;
+        el.setAttribute('aria-expanded', String(estado.mapaAbierto));
+        $('#mapa').hidden = !estado.mapaAbierto; return;
       }
-      if (el.hasAttribute('data-pendiente')) {
-        var aviso = el.closest('.pie-bloque').querySelector('.aviso');
-        aviso.hidden = false; aviso.textContent = t('pendiente'); return;
-      }
+      if (el.hasAttribute('data-depto')) { elegirDepto(el.getAttribute('data-depto')); return; }
       if (el.matches('.btn-ar') && window.MoraAR) {
-        var src = el.getAttribute('data-modelo');
         window.MoraAR.abrir({
-          src: src, iosSrc: el.getAttribute('data-ios') || src.replace(/\.glb$/i, '.usdz'),
-          titulo: el.getAttribute('data-titulo'), nota: 'Modelo ilustrativo'
+          src: el.getAttribute('data-modelo'), iosSrc: el.getAttribute('data-ios'),
+          titulo: el.getAttribute('data-titulo'), nota: t('modeloIlustrativo')
         });
       }
     });
@@ -495,9 +475,6 @@
     if (!grande || !nav || !('IntersectionObserver' in window)) return;
     new IntersectionObserver(function (e) { nav.classList.toggle('con-logo', !e[0].isIntersecting); }).observe(grande);
   }
-
-  /* Ganchos para la portada (portada.js). */
-  window.MoraCarta = { lang: function () { return estado.lang; }, t: t, elegirDepto: elegirDepto, reducido: reducido };
 
   estado.lang = detectarIdioma();
   var temaGuardado = leer('mora-tema');
