@@ -10,6 +10,7 @@
   <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ar.css">
@@ -26,6 +27,8 @@
   <script src="mapa.js" defer></script>
   <script src="ar.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="destacados.js" defer></script>
+  <script src="portada.js" defer></script>
   <script src="movimiento.js" defer></script>
   <script src="fondo.js" defer></script>
 </head>
@@ -34,25 +37,40 @@
   <canvas id="fondo" aria-hidden="true"></canvas>
   <a class="saltar" href="#carta">Ir a la carta</a>
 
-  <header class="cabecera" id="inicio">
-    <div class="controles">
+  <header class="cabecera portada" id="inicio">
+    <div class="barra">
+      <h1 class="barra-logo"><span class="logo" role="img" aria-label="Mora Bistró Argentino"></span></h1>
       <div class="idiomas" id="idiomas" role="group" aria-label="Idioma">
         <button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button>
+        <span aria-hidden="true">·</span>
         <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
+        <span aria-hidden="true">·</span>
         <button type="button" data-lang="pt" lang="pt" aria-pressed="false">PT</button>
       </div>
-      <button type="button" class="btn-tema" id="btn-tema" aria-label="Tema: Cuero">
-        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>
-        <span>Cuero</span>
-      </button>
     </div>
 
-    <!-- Logotipo recreado en tipografía. Reemplazar por el SVG oficial de Mora cuando el hotel lo entregue. -->
-    <h1 class="marca">
-      <span class="marca-mora">mora</span>
-      <span class="marca-bistro" id="bajada">Bistró argentino</span>
-    </h1>
-    <p class="ubicacion" id="ubicacion">en Sheraton Tucumán · Av. Soldati 440</p>
+    <section class="destacados" id="destacados" aria-roledescription="carrusel" aria-label="Productos destacados">
+      <div class="escena">
+        <div class="halo" aria-hidden="true"></div>
+        <div class="pedestal" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="visor"></div>
+        <div class="anillo-carga" aria-hidden="true"></div>
+        <button type="button" class="flecha flecha-ant" aria-label="Destacado anterior"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5 L8 12 L15 19" /></svg></button>
+        <button type="button" class="flecha flecha-sig" aria-label="Destacado siguiente"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5 L16 12 L9 19" /></svg></button>
+        <p class="ilustrativo">Modelo ilustrativo</p>
+      </div>
+      <div class="ficha" role="group" aria-roledescription="destacado" aria-live="polite">
+        <p class="ficha-origen"></p>
+        <h2 class="ficha-nombre"></h2>
+        <p class="ficha-linea"></p>
+        <div class="ficha-botones">
+          <a class="btn btn-carta" href="#carta">Ver en la carta</a>
+          <button type="button" class="btn btn-mesa" hidden>Ver en su mesa</button>
+        </div>
+      </div>
+      <div class="carrusel-puntos"></div>
+    </section>
+
     <p class="ahora" id="ahora" aria-live="polite"></p>
     <span class="bajar" aria-hidden="true"></span>
   </header>

@@ -69,12 +69,12 @@
 
   /* Cielo: el fluido a pantalla completa, con un resplandor tenue en el horizonte y dither contra las bandas. */
   var F_CIELO = PREC + RUIDO +
-    'uniform sampler2D uFluido; uniform vec2 uRes; uniform float uHorizonte, uClaro, uT; uniform vec3 uOro2;\n' +
+    'uniform sampler2D uFluido; uniform vec2 uRes; uniform float uHorizonte, uClaro, uT, uPortada; uniform vec3 uOro2;\n' +
     'void main(){\n' +
     '  vec2 uv = gl_FragCoord.xy / uRes;\n' +
     '  vec3 c = texture2D(uFluido, uv).rgb;\n' +
     '  float h = exp(-pow((uv.y - uHorizonte) * 5.0, 2.0));\n' +
-    '  c += uOro2 * h * 0.07 * (1.0 - uClaro);\n' +
+    '  c += uOro2 * h * (0.07 + 0.06 * uPortada) * (1.0 - uClaro);\n' +
     '  c += (hash(gl_FragCoord.xy + fract(uT)) - 0.5) / 160.0;\n' +
     '  gl_FragColor = vec4(c, 1.0);\n' +
     '}';
@@ -106,7 +106,7 @@
 
   function fRelieve(deriv) {
     return (deriv ? '#extension GL_OES_standard_derivatives : enable\n#define DERIV 1\n' : '') + PREC + RUIDO +
-      'uniform sampler2D uFluido; uniform vec2 uRes; uniform vec3 uOro, uOro2; uniform float uClaro, uNiebla;\n' +
+      'uniform sampler2D uFluido; uniform vec2 uRes; uniform vec3 uOro, uOro2; uniform float uClaro, uNiebla, uPortada;\n' +
       'varying float vH, vDist, vLuz; varying vec2 vMundo;\n' +
       'float linea(float v, float grosor){\n' +
       '#ifdef DERIV\n  float w = fwidth(v);\n#else\n  float w = 0.03 + vDist * 0.01;\n#endif\n' +
@@ -122,7 +122,7 @@
       '  float red = max(linea(vMundo.x / 1.1, 0.7), linea(vMundo.y / 1.1, 0.7)) * 0.16;\n' +
       '  float niebla = 1.0 - exp(-pow(vDist * uNiebla, 1.6));\n' +
       '  float cerca = smoothstep(0.4, 2.4, vDist);\n' +
-      '  float a = clamp(curva * 0.42 + mayor * 0.36 + red, 0.0, 1.0) * (1.0 - niebla) * cerca;\n' +
+      '  float a = clamp((curva * 0.42 + mayor * 0.36 + red) * (1.0 + 0.55 * uPortada), 0.0, 1.0) * (1.0 - niebla) * cerca;\n' +
       '  vec3 oro = mix(uOro, uOro2, smoothstep(1.2, 3.6, vH) * 0.7);\n' +
       '  vec3 c = mix(base, oro, a * mix(0.9, 0.55, uClaro));\n' +
       '  c += uOro2 * 0.05 * smoothstep(2.0, 3.6, vH) * (1.0 - niebla) * (1.0 - uClaro);\n' +
@@ -359,6 +359,7 @@
     gl.uniform1f(P.cielo.u.uClaro, claro);
     gl.uniform1f(P.cielo.u.uT, tiempo);
     gl.uniform3fv(P.cielo.u.uOro2, oro2);
+    gl.uniform1f(P.cielo.u.uPortada, 1 - subida);
     plano(P.cielo);
 
     /* B: relieve */
@@ -375,6 +376,7 @@
     gl.uniform3fv(R.u.uOro2, oro2);
     gl.uniform1f(R.u.uClaro, claro);
     gl.uniform1f(R.u.uNiebla, 0.055);
+    gl.uniform1f(R.u.uPortada, 1 - subida);
     gl.bindBuffer(gl.ARRAY_BUFFER, B.rejilla);
     var la = gl.getAttribLocation(R.p, 'aR');
     gl.enableVertexAttribArray(la);

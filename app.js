@@ -250,7 +250,7 @@
       '<p class="nota-centro">' + esc(t('tucumanIntro')) + '</p></header>' +
       '<ol class="pasos">' + pasos + '</ol>' +
       '<div class="pasos-precio"><span class="precio precio-grande">' + precio(mp.precio) + '</span> <span class="por-persona">' + esc(t('porPersona')) + '</span></div>' +
-      '<p class="incluye">' + esc(mp.incluye[estado.lang]) + '</p>' +
+      '<p class="incluye" id="pasos-incluye">' + esc(mp.incluye[estado.lang]) + '</p>' +
       foto(mp.fotoCopa, mp.fotoCopa.replace('.jpg', '-s.jpg'), '', 'foto-chica') +
       '<div class="mapa" id="mapa"><h3 class="subtitulo">' + esc(t('mapaTitulo')) + '</h3>' +
       '<p class="mapa-ayuda">' + esc(t('mapaAyuda')) + '</p>' +
@@ -324,7 +324,8 @@
     var r = CONFIG.resenas, g = CONFIG.gerente;
     var mail = g.email ? 'mailto:' + g.email : '', wa = g.whatsapp ? 'https://wa.me/' + g.whatsapp.replace(/\D/g, '') : '';
     var hs = function (a, b) { return a + '–' + b; };
-    return '<div class="pie-bloque resenas"><h2 class="titulo-script">' + esc(t('resenasTitulo')) + '</h2>' +
+    return '<span class="logo logo-pie" role="img" aria-label="Mora Bistró Argentino"></span>' +
+      '<div class="pie-bloque resenas"><h2 class="titulo-script">' + esc(t('resenasTitulo')) + '</h2>' +
       '<p>' + esc(t('resenasTexto')) + '</p><div class="botones">' +
       enlaceOAviso(r.google, t('google'), 'btn-resena') + enlaceOAviso(r.tripadvisor, t('tripadvisor'), 'btn-resena') + '</div>' +
       '<h3 class="subtitulo">' + esc(t('gerenteTitulo')) + '</h3><p>' + esc(t('gerenteTexto')) + '</p><div class="botones">' +
@@ -340,6 +341,9 @@
       '<div class="pie-bloque"><h3 class="subtitulo">' + esc(t('direccion')) + '</h3><address>Mora Bistró Argentino<br>Sheraton Tucumán · Av. Soldati 440<br>San Miguel de Tucumán</address>' +
       '<p><a href="https://www.instagram.com/' + esc(CONFIG.instagram) + '/" target="_blank" rel="noopener">' + esc(t('instagram')) + ' @' + esc(CONFIG.instagram) + '</a></p>' +
       '<p class="falasco">' + esc(t('falasco')) + '</p></div>' +
+      '<p class="pie-tema"><button type="button" class="btn-tema" id="btn-tema" aria-label="' + esc(t('tema')) + '">' +
+      '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>' +
+      '<span></span></button></p>' +
       '<p class="legal">' + esc(t('legal')) + '</p>' +
       '<p class="arriba"><a href="#inicio">' + esc(t('volverArriba')) + '</a></p>';
   }
@@ -352,8 +356,6 @@
     var md = document.querySelector('meta[name="description"]');
     if (md) md.setAttribute('content', t('descripcion'));
 
-    $('#bajada').textContent = t('bistro');
-    $('#ubicacion').textContent = t('ubicacion');
     $('#ahora').innerHTML = lineaAhora();
     $('#idiomas').setAttribute('aria-label', t('idioma'));
     document.querySelectorAll('#idiomas button').forEach(function (b) {
@@ -447,6 +449,9 @@
     /* Cambio de franja horaria sin recargar (tema automático y línea «Ahora»). */
     setInterval(function () { $('#ahora').innerHTML = lineaAhora(); aplicarTema(); }, 60000);
   }
+
+  /* Ganchos para la portada (portada.js). */
+  window.MoraCarta = { lang: function () { return estado.lang; }, t: t, elegirDepto: elegirDepto, reducido: reducido };
 
   estado.lang = detectarIdioma();
   var temaGuardado = leer('mora-tema');

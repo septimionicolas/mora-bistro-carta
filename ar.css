@@ -38,6 +38,17 @@ html.mora-ar-abierta body { overflow: hidden; }
   border-bottom: 1px solid var(--ar-linea);
 }
 
+/* Logo real teñido con máscara (logo-mora.png es blanco sobre transparente). */
+.mora-ar__marca { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mora-ar__logo {
+  flex: none;
+  width: 64px;
+  height: 24px;
+  background: var(--ar-laton);
+  -webkit-mask: url("logo-mora.png") left center / contain no-repeat;
+  mask: url("logo-mora.png") left center / contain no-repeat;
+}
+
 .mora-ar__titulo {
   margin: 0;
   font: inherit;

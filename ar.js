@@ -116,7 +116,10 @@
       '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">' +
       '<path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>';
     cerrarBtn.addEventListener('click', cerrar);
-    cabecera.appendChild(titulo);
+    var marca = el('div', 'mora-ar__marca');
+    marca.appendChild(el('span', 'mora-ar__logo', { 'aria-hidden': 'true' }));
+    marca.appendChild(titulo);
+    cabecera.appendChild(marca);
     cabecera.appendChild(cerrarBtn);
 
     var escena = el('div', 'mora-ar__escena');
