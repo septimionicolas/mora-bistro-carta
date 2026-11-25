@@ -345,6 +345,7 @@
       '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>' +
       '<span></span></button></p>' +
       '<p class="legal">' + esc(t('legal')) + '</p>' +
+      '<p class="legal"><a href="modelos/LICENCIAS.md">Modelos 3D</a> · <a href="fotos/CREDITOS.md">Fotos</a> · material ilustrativo, créditos y licencias</p>' +
       '<p class="arriba"><a href="#inicio">' + esc(t('volverArriba')) + '</a></p>';
   }
 

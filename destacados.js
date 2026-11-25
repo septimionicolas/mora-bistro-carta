@@ -16,6 +16,16 @@
  */
 var DESTACADOS = [
   {
+    id: 'carne',
+    modelo: 'modelos/carne-hero.glb',
+    modeloAR: 'modelos/carne.glb', modeloIos: 'modelos/carne.usdz',
+    camara: { orbita: '30deg 60deg 125%', fov: '28deg', escala: '1 1 1' },
+    origen: { es: 'Origen · Trancas', en: 'Origin · Trancas', pt: 'Origem · Trancas' },
+    nombre: { es: 'Carne de Trancas', en: 'Trancas beef', pt: 'Carne de Trancas' },
+    linea: { es: 'Ojo de bife con chimichurri', en: 'Ribeye with chimichurri', pt: 'Bife ancho com chimichurri' },
+    destino: 'ojo-de-bife', depto: 'trancas'
+  },
+  {
     id: 'limon',
     modelo: 'modelos/hero/limon.glb',
     modeloAR: 'modelos/limon.glb', modeloIos: 'modelos/limon.usdz',
@@ -75,6 +85,46 @@ var DESTACADOS = [
       pt: 'No café da manhã do Mora · cardápio completo em breve'
     },
     destino: 'prox-desayuno'
+  },
+  {
+    id: 'higo',
+    modelo: 'modelos/higo-hero.glb',
+    modeloAR: 'modelos/higo.glb', modeloIos: 'modelos/higo.usdz',
+    camara: { orbita: '25deg 72deg 125%', fov: '28deg', escala: '1 1 1' },
+    origen: { es: 'Origen · Burruyacú', en: 'Origin · Burruyacú', pt: 'Origem · Burruyacú' },
+    nombre: { es: 'Higos de Burruyacú', en: 'Burruyacú figs', pt: 'Figos de Burruyacú' },
+    linea: { es: 'Paso 1 · Degustación de quesos de Tafí con higos', en: 'Course 1 · Tafí cheese tasting with figs', pt: 'Etapa 1 · Degustação de queijos de Tafí com figos' },
+    destino: 'paso-1', depto: 'burruyacu'
+  },
+  {
+    id: 'arandano',
+    modelo: 'modelos/arandano-hero.glb',
+    modeloAR: 'modelos/arandano.glb', modeloIos: 'modelos/arandano.usdz',
+    camara: { orbita: '25deg 72deg 130%', fov: '28deg', escala: '1 1 1' },
+    origen: { es: 'Origen · Lules', en: 'Origin · Lules', pt: 'Origem · Lules' },
+    nombre: { es: 'Arándanos de Lules', en: 'Lules blueberries', pt: 'Mirtilos de Lules' },
+    linea: { es: 'Paso 3 · Salsa Malbec con arándanos', en: 'Course 3 · Malbec sauce with blueberries', pt: 'Etapa 3 · Molho Malbec com mirtilos' },
+    destino: 'paso-3', depto: 'lules'
+  },
+  {
+    id: 'trigo',
+    modelo: 'modelos/trigo-hero.glb',
+    modeloAR: 'modelos/trigo.glb', modeloIos: 'modelos/trigo.usdz',
+    camara: { orbita: '20deg 78deg 125%', fov: '28deg', escala: '1 1 1' },
+    origen: { es: 'Origen · Graneros', en: 'Origin · Graneros', pt: 'Origem · Graneros' },
+    nombre: { es: 'Trigo de Graneros', en: 'Graneros wheat', pt: 'Trigo de Graneros' },
+    linea: { es: 'Paso 3 · Risotto de trigo', en: 'Course 3 · Wheat risotto', pt: 'Etapa 3 · Risoto de trigo' },
+    destino: 'paso-3', depto: 'graneros'
+  },
+  {
+    id: 'naranja',
+    modelo: 'modelos/naranja-hero.glb',
+    modeloAR: 'modelos/naranja.glb', modeloIos: 'modelos/naranja.usdz',
+    camara: { orbita: '25deg 72deg 130%', fov: '28deg', escala: '1 1 1' },
+    origen: { es: 'Origen · Alberdi', en: 'Origin · Alberdi', pt: 'Origem · Alberdi' },
+    nombre: { es: 'Naranjas tucumanas', en: 'Tucumán oranges', pt: 'Laranjas de Tucumán' },
+    linea: { es: 'Ensalada fresca del Río', en: 'Fresh river salad', pt: 'Salada fresca do rio' },
+    destino: 'fresca-del-rio', depto: 'alberdi'
   }
 ];
 
