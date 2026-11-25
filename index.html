@@ -18,6 +18,7 @@
   <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" as="image" href="logo-mora.png">
+  <link rel="preload" as="image" href="logo-sheraton.svg">
   <style>
     /* Loader de Mora: CSS crítico, se ve antes de cualquier script. Si el JS falla, se va solo a los 4 s. */
     #mora-loader {
@@ -54,10 +55,18 @@
     }
     @keyframes loaderLlenar { to { transform: scaleX(.92); } }
     .loader-texto {
-      margin: 16px 0 0; font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-size: .62rem; font-weight: 500;
-      letter-spacing: .46em; text-indent: .46em; text-transform: uppercase; color: rgba(243, 238, 228, .72);
-      opacity: 0; animation: loaderAparece .9s ease .85s forwards; transition: opacity 400ms ease;
+      margin: 22px 0 0; display: flex; flex-direction: column; align-items: center; gap: 9px;
+      font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; color: rgba(243, 238, 228, .86);
+      opacity: 0; animation: loaderAparece .7s ease .4s forwards; transition: opacity 400ms ease;
     }
+    .lh-logo { display: block; width: 132px; aspect-ratio: 340 / 290; background: #F3EEE4;
+      -webkit-mask: url("logo-sheraton.svg") center / contain no-repeat; mask: url("logo-sheraton.svg") center / contain no-repeat; }
+    .lh-estrellas { font-size: .82rem; letter-spacing: .5em; text-indent: .5em; color: #D9B46C; line-height: 1; }
+    .lh-ciudad { font-size: .58rem; font-weight: 500; letter-spacing: .46em; text-indent: .46em; text-transform: uppercase; }
+    .lh-bonvoy { display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-top: 12px;
+      border-top: 1px solid rgba(217, 180, 108, .28); font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; line-height: 1.15; }
+    .lh-bonvoy small { font-size: .46rem; letter-spacing: .34em; text-indent: .34em; font-weight: 500; }
+    .lh-bonvoy b { font-size: .86rem; letter-spacing: .42em; text-indent: .42em; font-weight: 400; }
     @keyframes loaderAparece { to { opacity: 1; } }
     #mora-loader.sale { background-color: rgba(10, 8, 7, 0); pointer-events: none; }
     #mora-loader.sale .loader-linea, #mora-loader.sale .loader-texto { opacity: 0; animation: none; transition: opacity 300ms ease; }
@@ -103,11 +112,16 @@
     <div class="loader-centro">
       <div class="loader-logo"><span class="loader-tinta"></span><span class="loader-luz"></span></div>
       <div class="loader-linea"><i></i></div>
-      <p class="loader-texto">en Sheraton Tucumán</p>
+      <div class="loader-texto">
+        <span class="lh-logo"></span>
+        <span class="lh-estrellas">★★★★★</span>
+        <span class="lh-ciudad">Tucumán Hotel</span>
+        <span class="lh-bonvoy"><small>Marriott</small><b>Bonvoy</b></span>
+      </div>
     </div>
   </div>
   <script>
-    /* Loader: se va cuando están listas las fuentes y el logo, nunca antes de 1,2 s ni después de 2,5 s.
+    /* Loader: se va cuando están listas las fuentes y el logo, nunca antes de 2,2 s ni después de 3,2 s.
        ?loader=0 lo saltea. Al salir, el logo viaja a su lugar en la portada. */
     (function () {
       var el = document.getElementById('mora-loader'), raiz = document.documentElement;
@@ -116,10 +130,8 @@
       var lang = q.get('lang'), g = null;
       try { g = localStorage.getItem('mora-lang'); } catch (e) {}
       lang = /^(es|en|pt)$/.test(lang) ? lang : (/^(es|en|pt)$/.test(g) ? g : 'es');
-      var pre = { en: 'at', pt: 'no' }[lang];
-      if (pre) el.querySelector('.loader-texto').textContent = pre + ' Sheraton Tucumán';
       raiz.classList.add('cargando-mora');
-      var t0 = Date.now(), MIN = 1200, MAX = 2500, hecho = false;
+      var t0 = Date.now(), MIN = 2200, MAX = 3200, hecho = false;
       var reducido = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
       function quitar() {
         raiz.classList.remove('logo-en-vuelo');

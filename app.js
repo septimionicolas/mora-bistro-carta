@@ -488,6 +488,7 @@
       '<div class="pie-bloque"><h3 class="subtitulo">' + esc(t('direccion')) + '</h3><address>Mora Bistró Argentino<br>Sheraton Tucumán · Av. Soldati 440<br>San Miguel de Tucumán</address>' +
       '<p><a href="https://www.instagram.com/' + esc(CONFIG.instagram) + '/" target="_blank" rel="noopener">' + esc(t('instagram')) + ' @' + esc(CONFIG.instagram) + '</a></p>' +
       '<p class="falasco">' + esc(t('falasco')) + '</p></div>' +
+      '<div class="sello-hotel" role="img" aria-label="Sheraton Tucumán Hotel, cinco estrellas. Marriott Bonvoy"><span class="sh-logo"></span><span class="sh-estrellas">★★★★★</span><span class="sh-ciudad">Tucumán Hotel</span><span class="sh-bonvoy"><small>Marriott</small><b>Bonvoy</b></span></div>' +
       '<p class="pie-tema"><button type="button" class="btn-tema" id="btn-tema" aria-label="' + esc(t('tema')) + '">' +
       '<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>' +
       '<span></span></button></p>' +
@@ -512,7 +513,7 @@
     $('#nav').setAttribute('aria-label', t('navegacion'));
     $('#nav ul').innerHTML = navItems();
     $('#menu').innerHTML = indice();
-    $('.portada-bajada').textContent = ti('en') + ' Sheraton Tucumán';
+    $('.portada-bajada').innerHTML = esc(ti('en')) + ' Sheraton Tucumán<span class="portada-estrellas" aria-label="cinco estrellas">★★★★★</span>';
     $('.saltar').textContent = ti('saltar');
     $('#filtros').innerHTML = filtros();
     $('#carta').innerHTML = SECCIONES.map(seccion).join('') + tucuman() + bebidas();

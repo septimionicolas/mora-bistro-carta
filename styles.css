@@ -634,3 +634,15 @@ html.ficha-abierta, html.ficha-abierta body { overflow: hidden; }
   .ficha-cuerpo { padding-top: 0; }
   .ficha-cuerpo > .ficha-texto:first-child { padding-top: 22px; }
 }
+
+/* Sello del hotel: Sheraton, cinco estrellas y Marriott Bonvoy */
+.sello-hotel { display: flex; flex-direction: column; align-items: center; gap: 9px; padding: 30px 0 26px; color: var(--tinta); font-family: var(--sans); }
+.sh-logo { display: block; width: 150px; aspect-ratio: 340 / 290; background: var(--tinta);
+  -webkit-mask: url("logo-sheraton.svg") center / contain no-repeat; mask: url("logo-sheraton.svg") center / contain no-repeat; }
+.sh-estrellas { font-size: .9rem; letter-spacing: .5em; text-indent: .5em; color: var(--oro); line-height: 1; }
+.sh-ciudad { font-size: .62rem; font-weight: 500; letter-spacing: .46em; text-indent: .46em; text-transform: uppercase; }
+.sh-bonvoy { display: flex; flex-direction: column; align-items: center; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--linea);
+  font-family: 'Helvetica Neue', Arial, sans-serif; text-transform: uppercase; line-height: 1.15; }
+.sh-bonvoy small { font-size: .5rem; letter-spacing: .34em; text-indent: .34em; font-weight: 500; }
+.sh-bonvoy b { font-size: .95rem; letter-spacing: .42em; text-indent: .42em; font-weight: 400; }
+.portada-estrellas { display: block; margin-top: 8px; font-size: .7rem; letter-spacing: .5em; text-indent: .5em; color: var(--oro); }
