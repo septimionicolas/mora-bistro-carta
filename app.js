@@ -25,16 +25,26 @@
   /* Textos del índice «La carta» (la interfaz; los datos de menu.js no se tocan). */
   var TEXTOS_INDICE = {
     es: { navCarta: 'Carta', titulo: 'La carta', bajada: 'Elija por dónde empezar', saltar: 'Ir a la carta', pasos: '4 pasos',
-      en: 'en', tresD: 'Algunos platos se pueden ver en 3D sobre su mesa: busque «Ver en su mesa».',
+      en: 'en', tresD: 'Algunos platos se pueden ver en 3D sobre su mesa: busque la marca 3D.',
       platos: function (n) { return n === 1 ? '1 plato' : n + ' platos'; }, bebidas: function (n) { return n + ' bebidas'; } },
     en: { navCarta: 'Menu', titulo: 'The menu', bajada: 'Choose where to begin', saltar: 'Skip to the menu', pasos: '4 courses',
-      en: 'at', tresD: 'Some dishes can be viewed in 3D on your table: look for «See it on your table».',
+      en: 'at', tresD: 'Some dishes can be viewed in 3D on your table: look for the 3D mark.',
       platos: function (n) { return n === 1 ? '1 dish' : n + ' dishes'; }, bebidas: function (n) { return n + ' drinks'; } },
     pt: { navCarta: 'Cardápio', titulo: 'O cardápio', bajada: 'Escolha por onde começar', saltar: 'Ir ao cardápio', pasos: '4 etapas',
-      en: 'no', tresD: 'Alguns pratos podem ser vistos em 3D na sua mesa: procure «Ver na sua mesa».',
+      en: 'no', tresD: 'Alguns pratos podem ser vistos em 3D na sua mesa: procure a marca 3D.',
       platos: function (n) { return n === 1 ? '1 prato' : n + ' pratos'; }, bebidas: function (n) { return n + ' bebidas'; } }
   };
   function ti(clave) { return TEXTOS_INDICE[estado.lang][clave]; }
+  /* Textos de la ficha del plato y de los filtros. */
+  var TEXTOS_FICHA = {
+    es: { cerrar: 'Cerrar', tresD: 'Disponible en 3D', dialogo: 'Detalle del plato',
+      sinCoincidencias: 'Ningún plato coincide con los filtros elegidos.' },
+    en: { cerrar: 'Close', tresD: 'Available in 3D', dialogo: 'Dish details',
+      sinCoincidencias: 'No dish matches the selected filters.' },
+    pt: { cerrar: 'Fechar', tresD: 'Disponível em 3D', dialogo: 'Detalhes do prato',
+      sinCoincidencias: 'Nenhum prato corresponde aos filtros escolhidos.' }
+  };
+  function tf(clave) { return TEXTOS_FICHA[estado.lang][clave]; }
   var $ = function (sel) { return document.querySelector(sel); };
 
   /* ---------- idioma ---------- */
@@ -43,12 +53,7 @@
     if (IDIOMAS.indexOf(q) >= 0) return q;
     var g = leer('mora-lang');
     if (IDIOMAS.indexOf(g) >= 0) return g;
-    var langs = navigator.languages || [navigator.language || 'es'];
-    for (var i = 0; i < langs.length; i++) {
-      var base = String(langs[i]).slice(0, 2).toLowerCase();
-      if (IDIOMAS.indexOf(base) >= 0) return base;
-    }
-    return 'es';
+    return 'es'; /* español por defecto: no se mira el idioma del navegador */
   }
 
   /* ---------- hora de Tucumán ---------- */
@@ -131,10 +136,10 @@
       '<figcaption>' + esc(t('ilustrativa')) + '</figcaption></figure>';
   }
 
-  function botonAR(item, titulo) {
+  function botonAR(item, titulo, frag) {
     if (!item.modelo || !window.MoraAR) return '';
     return '<button type="button" class="btn-ar" data-modelo="' + esc(item.modelo) + '" data-ios="' + esc(item.modeloIos || '') +
-      '" data-titulo="' + esc(titulo) + '">' + esc(t('verEnSuMesa')) + '</button>';
+      '" data-titulo="' + esc(titulo) + '" data-frag="' + esc(frag || item.id || '') + '">' + esc(t('verEnSuMesa')) + '</button>';
   }
 
   function etiquetas(item) {
@@ -143,23 +148,148 @@
     }).join('');
   }
 
+  /* Fila de la lista: el nombre es un botón que se estira sobre toda la fila y abre la ficha. */
   function plato(item) {
     var nombre = tr(item.nombre), desc = tr(item.desc);
-    var maridaje = item.maridaje ? '<p class="maridaje">' + esc(t('maridaje')) + ': ' + esc(tr(item.maridaje)) + '</p>' : '';
     var tags = etiquetas(item);
-    return '<li class="plato" id="plato-' + esc(item.id) + '" data-tags="' + esc((item.tags || []).join(' ')) + '">' +
-      '<div class="plato-linea"><h3 class="plato-nombre">' + esc(nombre) + '</h3>' +
+    var marca = item.modelo ? '<span class="marca-3d"><span aria-hidden="true">3D</span><span class="vh">' + esc(tf('tresD')) + '</span></span>' : '';
+    var mini = item.fotoMini ? '<img class="plato-mini" src="' + esc(item.fotoMini) + '" alt="" width="160" height="160" loading="lazy" decoding="async" onerror="this.remove()">' : '';
+    return '<li class="plato plato-fila" id="plato-' + esc(item.id) + '" data-tags="' + esc((item.tags || []).join(' ')) + '">' +
+      '<div class="plato-texto"><div class="plato-linea"><h3 class="plato-nombre"><button type="button" class="plato-btn" data-plato="' + esc(item.id) +
+      '" aria-haspopup="dialog">' + esc(nombre) + '</button></h3>' + marca +
       '<span class="puntos" aria-hidden="true"></span><span class="precio">' + precio(item.precio) + '</span></div>' +
       (desc ? '<p class="plato-desc">' + esc(desc) + '</p>' : '') +
-      (tags ? '<ul class="tags">' + tags + '</ul>' : '') + maridaje +
-      foto(item.foto, item.fotoMini, nombre) + botonAR(item, nombre) + '</li>';
+      (tags ? '<ul class="tags">' + tags + '</ul>' : '') + '</div>' + mini + '</li>';
   }
 
   function seccion(s) {
     return '<section class="seccion" id="' + s.id + '" aria-labelledby="t-' + s.id + '">' +
       '<header class="seccion-cabeza">' + ornamento() + '<h2 id="t-' + s.id + '" class="titulo-script">' + esc(tr(s.titulo)) + '</h2></header>' +
-      '<ul class="platos">' + s.items.map(plato).join('') + '</ul>' +
-      '<p class="sin-resultados" hidden>' + esc(t('filtroVacio')) + '</p></section>';
+      '<ul class="platos platos-carta">' + s.items.map(plato).join('') + '</ul></section>';
+  }
+
+  /* ---------- ficha del plato ---------- */
+  var PLATOS = {};
+  SECCIONES.forEach(function (s) { s.items.forEach(function (it) { PLATOS[it.id] = it; }); });
+  var ficha = null, fichaId = null, fichaFoco = null, fichaTimer = 0;
+  var FOCO_FICHA = 'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+
+  function construirFicha() {
+    var raiz = document.createElement('div');
+    raiz.className = 'ficha';
+    raiz.hidden = true;
+    raiz.innerHTML = '<div class="ficha-fondo" data-cerrar-ficha></div>' +
+      '<div class="ficha-panel" role="dialog" aria-modal="true" aria-labelledby="ficha-titulo" tabindex="-1">' +
+      '<div class="ficha-asa" aria-hidden="true"></div>' +
+      '<button type="button" class="ficha-cerrar" data-cerrar-ficha><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">' +
+      '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button>' +
+      '<div class="ficha-cuerpo"></div></div>';
+    document.body.appendChild(raiz);
+    ficha = { raiz: raiz, panel: raiz.querySelector('.ficha-panel'), cuerpo: raiz.querySelector('.ficha-cuerpo'), cerrar: raiz.querySelector('.ficha-cerrar') };
+    raiz.addEventListener('keydown', teclaFicha);
+    arrastreFicha(ficha.panel);
+  }
+
+  function contenidoFicha(item) {
+    var nombre = tr(item.nombre), desc = tr(item.desc), tags = etiquetas(item);
+    var fotoHtml = item.foto ? '<figure class="ficha-foto"><img src="' + esc(item.fotoMini || item.foto) + '"' +
+      (item.fotoMini ? ' srcset="' + esc(item.fotoMini) + ' 640w, ' + esc(item.foto) + ' 1200w" sizes="(min-width: 820px) 560px, 100vw"' : '') +
+      ' width="1200" height="900" decoding="async" alt="' + esc(nombre) + '" onerror="var f=this.closest(\'.ficha-cuerpo\');' +
+      'f.querySelectorAll(\'.ficha-foto, .ficha-ilustrativa\').forEach(function(n){n.remove()})"></figure>' : '';
+    return fotoHtml + '<div class="ficha-texto"><div class="plato-linea"><h2 class="ficha-nombre" id="ficha-titulo">' + esc(nombre) + '</h2>' +
+      '<span class="puntos" aria-hidden="true"></span><span class="precio">' + precio(item.precio) + '</span></div>' +
+      (desc ? '<p class="ficha-desc">' + esc(desc) + '</p>' : '') +
+      (tags ? '<ul class="tags">' + tags + '</ul>' : '') +
+      (item.maridaje ? '<p class="maridaje"><span class="maridaje-etiqueta">' + esc(t('maridaje')) + '</span> ' + esc(tr(item.maridaje)) + '</p>' : '') +
+      botonAR(item, nombre, 'plato-' + item.id) +
+      (item.foto ? '<p class="ficha-ilustrativa">' + esc(t('ilustrativa')) + '</p>' : '') + '</div>';
+  }
+
+  function abrirFicha(id, desde) {
+    var item = PLATOS[id];
+    if (!item) return false;
+    if (!ficha) construirFicha();
+    clearTimeout(fichaTimer);
+    if (!fichaId) fichaFoco = desde || document.activeElement;
+    fichaId = id;
+    ficha.panel.setAttribute('lang', estado.lang);
+    ficha.panel.setAttribute('aria-label', tf('dialogo'));
+    ficha.cerrar.setAttribute('aria-label', tf('cerrar'));
+    ficha.cuerpo.innerHTML = contenidoFicha(item);
+    ficha.cuerpo.scrollTop = 0;
+    ficha.panel.style.transform = '';
+    ficha.raiz.hidden = false;
+    document.documentElement.classList.add('ficha-abierta');
+    fondoInerte(true);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { if (fichaId) ficha.raiz.classList.add('abierta'); }); });
+    ficha.cerrar.focus({ preventScroll: true });
+    if (location.hash !== '#plato-' + id) history.replaceState(null, '', '#plato-' + id);
+    return true;
+  }
+
+  function cerrarFicha() {
+    if (!ficha || !fichaId) return;
+    var id = fichaId;
+    fichaId = null;
+    ficha.raiz.classList.remove('abierta');
+    ficha.panel.classList.remove('arrastrando');
+    ficha.panel.style.transform = ''; /* desde donde quedó el arrastre, la transición la lleva hasta abajo */
+    document.documentElement.classList.remove('ficha-abierta');
+    fondoInerte(false);
+    fichaTimer = setTimeout(function () { ficha.raiz.hidden = true; }, reducido() ? 0 : 280);
+    if (/^#plato-/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+    var volver = fichaFoco && document.contains(fichaFoco) ? fichaFoco : document.querySelector('#plato-' + id + ' .plato-btn');
+    fichaFoco = null;
+    if (volver && volver.focus) volver.focus({ preventScroll: true });
+  }
+
+  function fondoInerte(si) {
+    document.querySelectorAll('main, #nav, .cabecera, #pie, .saltar').forEach(function (n) {
+      if (si) n.setAttribute('inert', ''); else n.removeAttribute('inert');
+    });
+  }
+
+  function teclaFicha(e) {
+    if (document.documentElement.classList.contains('mora-ar-abierta')) return;
+    if (e.key === 'Escape') { e.preventDefault(); cerrarFicha(); return; }
+    if (e.key !== 'Tab') return;
+    var lista = Array.prototype.filter.call(ficha.panel.querySelectorAll(FOCO_FICHA), function (n) { return n.offsetParent !== null; });
+    if (!lista.length) return;
+    var primero = lista[0], ultimo = lista[lista.length - 1];
+    if (e.shiftKey && (document.activeElement === primero || document.activeElement === ficha.panel)) { e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && document.activeElement === ultimo) { e.preventDefault(); primero.focus(); }
+  }
+
+  /* Hoja del teléfono: se cierra arrastrando hacia abajo desde el asa o la foto. */
+  function arrastreFicha(panel) {
+    var y0 = 0, t0 = 0, dy = 0, activo = false;
+    panel.addEventListener('pointerdown', function (e) {
+      if (window.innerWidth >= 820 || !e.target.closest('.ficha-asa, .ficha-foto')) return;
+      activo = true; y0 = e.clientY; t0 = Date.now(); dy = 0;
+      panel.classList.add('arrastrando');
+      try { panel.setPointerCapture(e.pointerId); } catch (err) { /* sin captura */ }
+    });
+    panel.addEventListener('pointermove', function (e) {
+      if (!activo) return;
+      dy = Math.max(0, e.clientY - y0);
+      panel.style.transform = 'translateY(' + dy + 'px)';
+    });
+    function soltar() {
+      if (!activo) return;
+      activo = false;
+      panel.classList.remove('arrastrando');
+      var rapido = dy > 40 && dy / Math.max(1, Date.now() - t0) > 0.6;
+      if (dy > 100 || rapido) cerrarFicha();
+      else panel.style.transform = '';
+    }
+    panel.addEventListener('pointerup', soltar);
+    panel.addEventListener('pointercancel', soltar);
+  }
+
+  function fichaDesdeHash() {
+    var m = /^#plato-(.+)$/.exec(location.hash);
+    if (m && PLATOS[m[1]]) { if (fichaId !== m[1]) abrirFicha(m[1]); }
+    else if (fichaId) cerrarFicha();
   }
 
   function bebidas() {
@@ -307,14 +437,14 @@
     return '<div class="filtros" role="group" aria-label="' + esc(t('filtros')) + '">' +
       ['sintacc', 'vegano', 'compartir'].map(function (f) {
         return '<button type="button" class="filtro" data-filtro="' + f + '" aria-pressed="' + (estado.filtros.indexOf(f) >= 0) + '">' + esc(t(f)) + '</button>';
-      }).join('') + '<span class="filtro-cuenta" aria-live="polite"></span></div>';
+      }).join('') + '</div><div class="filtro-estado" aria-live="polite"></div>';
   }
 
   function aplicarFiltros() {
     var total = 0, activos = estado.filtros;
-    document.querySelectorAll('.seccion').forEach(function (sec) {
-      var platos = sec.querySelectorAll('.platos:not(.platos-simples) > .plato');
-      if (!platos.length) return;
+    document.querySelectorAll('#carta > .seccion').forEach(function (sec) {
+      var platos = sec.querySelectorAll('.platos-carta > .plato');
+      if (!platos.length) { sec.hidden = !!activos.length; return; } /* pasos y bebidas no se filtran: se ocultan */
       var visibles = 0;
       platos.forEach(function (p) {
         var tags = (p.getAttribute('data-tags') || '').split(' ');
@@ -323,12 +453,13 @@
         if (ok) visibles++;
       });
       total += visibles;
-      var vacio = sec.querySelector('.sin-resultados');
-      if (vacio) vacio.hidden = true;
       sec.hidden = !!(activos.length && visibles === 0); /* sección sin coincidencias: se oculta entera */
     });
-    var cuenta = $('.filtro-cuenta');
-    if (cuenta) cuenta.innerHTML = activos.length ? esc(t('resultados')(total)) + ' · <button type="button" class="limpiar">' + esc(t('limpiar')) + '</button>' : '';
+    var caja = $('.filtro-estado');
+    if (!caja) return;
+    caja.innerHTML = activos.length ? '<p class="filtro-cuenta">' + esc(t('resultados')(total)) + '</p>' +
+      (total ? '' : '<p class="filtro-vacio">' + esc(tf('sinCoincidencias')) + '</p>') +
+      '<button type="button" class="limpiar">' + esc(t('limpiar')) + '</button>' : '';
   }
 
   /* ---------- pie ---------- */
@@ -422,8 +553,13 @@
   /* ---------- eventos ---------- */
   function eventos() {
     document.addEventListener('click', function (ev) {
-      var el = ev.target.closest('button, a, path[data-depto]');
+      var el = ev.target.closest('button, a, path[data-depto], [data-cerrar-ficha]');
       if (!el) return;
+      if (el.hasAttribute('data-cerrar-ficha')) { cerrarFicha(); return; }
+      if (el.matches('.plato-btn')) { abrirFicha(el.getAttribute('data-plato'), el); return; }
+      if (el.matches('a[href^="#plato-"]') && PLATOS[el.getAttribute('href').slice(7)]) {
+        ev.preventDefault(); abrirFicha(el.getAttribute('href').slice(7), el); return;
+      }
       if (el.matches('.indice-tarjeta') && !reducido()) {
         el.classList.remove('brilla'); void el.offsetWidth; el.classList.add('brilla');
       }
@@ -453,11 +589,17 @@
       }
       if (el.hasAttribute('data-depto')) { elegirDepto(el.getAttribute('data-depto')); return; }
       if (el.matches('.btn-ar') && window.MoraAR) {
+        var frag = el.getAttribute('data-frag');
         window.MoraAR.abrir({
           src: el.getAttribute('data-modelo'), iosSrc: el.getAttribute('data-ios'),
-          titulo: el.getAttribute('data-titulo'), nota: t('modeloIlustrativo')
+          titulo: el.getAttribute('data-titulo'), nota: t('modeloIlustrativo'),
+          enlace: location.origin + location.pathname + (estado.lang !== 'es' ? '?lang=' + estado.lang : '') + (frag ? '#' + frag : '')
         });
       }
+    });
+    window.addEventListener('hashchange', fichaDesdeHash);
+    document.addEventListener('focusin', function (e) {
+      if (fichaId && !ficha.raiz.contains(e.target) && !e.target.closest('.mora-ar')) ficha.cerrar.focus({ preventScroll: true });
     });
     document.addEventListener('keydown', function (ev) {
       var el = ev.target;
@@ -482,4 +624,5 @@
   render();
   eventos();
   logoEnNav();
+  fichaDesdeHash();
 })();

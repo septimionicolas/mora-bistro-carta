@@ -115,7 +115,7 @@
       if (q.get('loader') === '0') { el.parentNode.removeChild(el); return; }
       var lang = q.get('lang'), g = null;
       try { g = localStorage.getItem('mora-lang'); } catch (e) {}
-      lang = /^(es|en|pt)$/.test(lang) ? lang : (/^(es|en|pt)$/.test(g) ? g : String((navigator.languages || [navigator.language || 'es'])[0]).slice(0, 2));
+      lang = /^(es|en|pt)$/.test(lang) ? lang : (/^(es|en|pt)$/.test(g) ? g : 'es');
       var pre = { en: 'at', pt: 'no' }[lang];
       if (pre) el.querySelector('.loader-texto').textContent = pre + ' Sheraton Tucumán';
       raiz.classList.add('cargando-mora');

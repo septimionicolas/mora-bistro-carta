@@ -169,6 +169,13 @@ html.mora-ar-abierta body { overflow: hidden; }
 }
 
 .mora-ar__aviso { margin: 0; color: var(--ar-tenue); }
+
+/* computadora sin RA: QR para seguir en el teléfono (caja clara en los dos temas para que lea cualquier cámara) */
+.mora-ar__qr { flex-basis: 100%; display: flex; align-items: center; gap: 16px; }
+.mora-ar__qr[hidden] { display: none; }
+.mora-ar__qr-codigo { flex: none; line-height: 0; padding: 6px; border-radius: 10px; background: #FAF7F1; box-shadow: 0 0 0 1px var(--ar-linea); }
+.mora-ar__qr-codigo svg { display: block; width: 132px; height: 132px; }
+.mora-ar__qr-texto { margin: 0; max-width: 18em; font-size: 0.9375rem; color: var(--ar-marfil, currentColor); }
 .mora-ar__aviso:empty { display: none; }
 
 .mora-ar__nota {
