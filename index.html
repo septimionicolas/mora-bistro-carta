@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mora Bistró Argentino · Carta</title>
+  <meta name="description" content="Carta de Mora Bistró Argentino, en Sheraton Tucumán. Cocina tucumana de producto, en español, inglés y portugués.">
+  <meta name="theme-color" content="#F3EEE4">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="ar.css">
+  <script>
+    /* Tema antes de pintar, para que no parpadee. app.js lo vuelve a calcular con la hora de Tucumán. */
+    (function () {
+      var tema = null, q = new URLSearchParams(location.search).get('tema');
+      try { tema = localStorage.getItem('mora-tema'); } catch (e) {}
+      if (q === 'oscuro' || q === 'claro') tema = q;
+      if (tema !== 'oscuro' && tema !== 'claro') { var h = new Date().getHours(); tema = (h >= 19 || h < 7) ? 'oscuro' : 'claro'; }
+      document.documentElement.setAttribute('data-theme', tema === 'oscuro' ? 'dark' : 'light');
+    })();
+  </script>
+  <script src="menu.js" defer></script>
+  <script src="mapa.js" defer></script>
+  <script src="ar.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#carta">Ir a la carta</a>
+
+  <header class="cabecera" id="inicio">
+    <div class="controles">
+      <div class="idiomas" id="idiomas" role="group" aria-label="Idioma">
+        <button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
+        <button type="button" data-lang="pt" lang="pt" aria-pressed="false">PT</button>
+      </div>
+      <button type="button" class="btn-tema" id="btn-tema" aria-label="Tema: Automático">
+        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5 A6.5 6.5 0 0 1 10 16.5 Z" /></svg>
+        <span>Automático</span>
+      </button>
+    </div>
+
+    <!-- Logotipo recreado en tipografía. Reemplazar por el SVG oficial de Mora cuando el hotel lo entregue. -->
+    <h1 class="marca">
+      <span class="marca-mora">mora</span>
+      <span class="marca-bistro" id="bajada">Bistró argentino</span>
+    </h1>
+    <p class="ubicacion" id="ubicacion">en Sheraton Tucumán · Av. Soldati 440</p>
+    <p class="ahora" id="ahora" aria-live="polite"></p>
+  </header>
+
+  <nav class="nav" id="nav" aria-label="Secciones de la carta">
+    <ul></ul>
+  </nav>
+
+  <main>
+    <div id="filtros"></div>
+    <div id="carta">
+      <noscript><p class="nota-centro">Esta carta necesita JavaScript activado para mostrarse.</p></noscript>
+    </div>
+  </main>
+
+  <footer class="pie" id="pie"></footer>
+</body>
+</html>

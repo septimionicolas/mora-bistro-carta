@@ -1,0 +1,260 @@
+/* Mora Bistró Argentino · carta digital. Mobile first (360–430 px). */
+
+:root {
+  --fondo: #F3EEE4;
+  --fondo-nav: rgba(243, 238, 228, 0.94);
+  --tinta: #141211;
+  --tinta-suave: #5A5048;
+  --mora: #4B1D3A;
+  --mora-velo: rgba(75, 29, 58, 0.10);
+  --laton: #A88B5A;          /* solo filetes y ornamentos */
+  --laton-texto: #775F33;    /* latón oscurecido para texto chico (AA) */
+  --linea: rgba(20, 18, 17, 0.16);
+  --foco: #4B1D3A;
+  --serif: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;
+  --sans: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --script: 'Allura', 'Snell Roundhand', 'Apple Chancery', cursive;
+  --lento: 600ms cubic-bezier(.2, .6, .2, 1);
+}
+
+:root[data-theme="dark"] {
+  --fondo: #141211;
+  --fondo-nav: rgba(20, 18, 17, 0.94);
+  --tinta: #EDE6D9;
+  --tinta-suave: #B5AA99;
+  --mora: #D4A5C4;           /* mora aclarada para contraste sobre cuero */
+  --mora-velo: rgba(212, 165, 196, 0.14);
+  --laton: #A88B5A;
+  --laton-texto: #C4A673;
+  --linea: rgba(237, 230, 217, 0.16);
+  --foco: #D4A5C4;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 64px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--serif);
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  overflow-x: hidden;
+  transition: background-color var(--lento), color var(--lento);
+}
+
+a { color: var(--mora); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--foco); outline-offset: 3px; border-radius: 2px; }
+[hidden] { display: none !important; }
+
+.saltar {
+  position: absolute; left: 16px; top: -60px; z-index: 30;
+  background: var(--tinta); color: var(--fondo); padding: 10px 14px; font-family: var(--sans); font-size: .8rem;
+}
+.saltar:focus { top: 12px; }
+
+/* ---------- cabecera ---------- */
+.cabecera {
+  text-align: center;
+  padding: 16px 16px 28px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.controles { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 28px; }
+.idiomas { display: flex; }
+.idiomas button, .btn-tema {
+  min-height: 44px; min-width: 44px; background: none; border: 0; cursor: pointer;
+  font-family: var(--sans); font-size: .75rem; letter-spacing: .14em; color: var(--tinta-suave);
+}
+.idiomas button[aria-pressed="true"] { color: var(--mora); text-decoration: underline; text-underline-offset: 6px; }
+.btn-tema { display: inline-flex; align-items: center; gap: 8px; padding: 0 4px; text-transform: uppercase; }
+.btn-tema svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1; }
+.btn-tema svg path { fill: currentColor; stroke: none; }
+
+.marca { margin: 0; font-weight: 400; line-height: 1; }
+.marca-mora {
+  display: block; font-family: var(--script); font-size: 5.6rem; color: var(--mora);
+  line-height: .9; padding-top: 4px;
+}
+.marca-bistro {
+  display: block; margin-top: 10px; font-family: var(--sans); font-size: .72rem; font-weight: 500;
+  letter-spacing: .42em; text-transform: uppercase; padding-left: .42em;
+}
+.ubicacion {
+  margin: 14px 0 0; font-style: italic; color: var(--tinta-suave); font-size: 1rem;
+}
+.ahora {
+  margin: 22px auto 0; padding: 10px 0; max-width: 320px;
+  border-top: 1px solid var(--laton); border-bottom: 1px solid var(--laton);
+  font-family: var(--sans); font-size: .78rem; letter-spacing: .06em; min-height: 44px;
+}
+.ahora-etiqueta { text-transform: uppercase; letter-spacing: .16em; color: var(--laton-texto); }
+.ahora-link { display: inline-block; margin-left: 6px; padding: 6px 2px; }
+
+/* ---------- navegación ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--fondo-nav);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--linea);
+}
+.nav ul {
+  list-style: none; margin: 0 auto; padding: 0 8px; max-width: 760px;
+  display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+}
+.nav ul::-webkit-scrollbar { display: none; }
+.nav a {
+  display: flex; align-items: center; min-height: 48px; padding: 0 12px; white-space: nowrap;
+  font-family: var(--sans); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--tinta-suave); text-decoration: none; border-bottom: 1px solid transparent;
+  transition: color var(--lento), border-color var(--lento);
+}
+.nav a.activo { color: var(--mora); border-bottom-color: var(--mora); }
+
+/* ---------- filtros ---------- */
+main { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+.filtros { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding: 22px 0 4px; }
+.filtro {
+  min-height: 44px; padding: 0 16px; cursor: pointer; background: none;
+  border: 1px solid var(--linea); border-radius: 22px;
+  font-family: var(--sans); font-size: .72rem; letter-spacing: .1em; color: var(--tinta);
+  transition: background-color var(--lento), border-color var(--lento);
+}
+.filtro[aria-pressed="true"] { border-color: var(--mora); background: var(--mora-velo); color: var(--mora); }
+.filtro-cuenta { width: 100%; text-align: center; font-family: var(--sans); font-size: .72rem; color: var(--tinta-suave); min-height: 1em; }
+.limpiar { background: none; border: 0; color: var(--mora); text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 6px; font-size: inherit; }
+
+/* ---------- secciones ---------- */
+.seccion { padding: 44px 0 12px; scroll-margin-top: 56px; }
+.seccion-cabeza { text-align: center; margin-bottom: 18px; }
+.ornamento { display: block; width: 132px; height: 12px; margin: 0 auto 6px; fill: none; stroke: var(--laton); stroke-width: .9; }
+.ornamento path:last-of-type { fill: var(--fondo); }
+.ornamento circle { fill: var(--laton); stroke: none; }
+.titulo-script {
+  margin: 0; font-family: var(--script); font-weight: 400; font-size: 3rem; line-height: 1.15; color: var(--mora);
+}
+.titulo-grande { font-size: 3.3rem; }
+.sobretitulo, .subtitulo {
+  font-family: var(--sans); font-size: .7rem; font-weight: 500; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--laton-texto);
+}
+.sobretitulo { margin: 8px 0 0; }
+.subtitulo { margin: 34px 0 6px; text-align: center; }
+.nota-centro { text-align: center; color: var(--tinta-suave); font-style: italic; margin: 10px auto 0; max-width: 30em; }
+
+.platos { list-style: none; margin: 0; padding: 0; }
+.plato { padding: 16px 0; border-bottom: 1px solid var(--linea); }
+.plato:last-child { border-bottom: 0; }
+.plato-linea { display: flex; align-items: baseline; gap: 8px; }
+.plato-nombre { margin: 0; font-size: 1.25rem; font-weight: 500; line-height: 1.25; flex: 0 1 auto; }
+.puntos { flex: 1 1 12px; min-width: 12px; border-bottom: 1px dotted var(--laton); transform: translateY(-4px); }
+.precio {
+  flex: 0 0 auto; font-family: var(--sans); font-size: .9rem; font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums; letter-spacing: .02em; text-align: right;
+}
+.plato-desc { margin: 4px 0 0; color: var(--tinta-suave); font-style: italic; font-size: 1.06rem; }
+.tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0; margin: 8px 0 0; }
+.tag { font-family: var(--sans); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--laton-texto); }
+.origen, .maridaje { margin: 6px 0 0; font-family: var(--sans); font-size: .74rem; letter-spacing: .04em; color: var(--tinta-suave); }
+.origen a { display: inline-block; padding: 4px 0; }
+.maridaje::before { content: ''; display: inline-block; width: 14px; height: 1px; background: var(--laton); vertical-align: middle; margin-right: 8px; }
+.sin-resultados { text-align: center; font-style: italic; color: var(--tinta-suave); }
+.platos-simples .plato { padding: 11px 0; }
+.platos-simples .plato-nombre { font-size: 1.12rem; font-weight: 400; }
+
+/* fotos opcionales: si el archivo falta, la figura se oculta sola */
+.foto { margin: 14px 0 0; }
+.foto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--linea); }
+.foto figcaption { margin-top: 4px; font-family: var(--sans); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-suave); text-align: right; }
+.foto-ancha { margin: 0 -16px 8px; }
+.foto-ancha figcaption { padding-right: 16px; }
+.foto-chica { max-width: 320px; margin: 18px auto 0; }
+
+.btn-ar {
+  margin-top: 12px; min-height: 44px; padding: 0 18px; cursor: pointer; background: none;
+  border: 1px solid var(--laton); color: var(--tinta);
+  font-family: var(--sans); font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+}
+
+/* ---------- Tucumán a la carta ---------- */
+.tucuman { padding-top: 36px; }
+.pasos { list-style: none; margin: 18px 0 0; padding: 0; counter-reset: paso; }
+.paso { display: grid; grid-template-columns: 44px 1fr; gap: 0 12px; padding: 18px 0; border-bottom: 1px solid var(--linea); scroll-margin-top: 64px; }
+.paso-num { font-family: var(--serif); font-size: 1.6rem; color: var(--laton-texto); line-height: 1.2; text-align: center; border-right: 1px solid var(--laton); padding-right: 10px; }
+.paso-titulo { margin: 0; font-family: var(--sans); font-size: .7rem; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--mora); }
+.paso p { margin: 4px 0 0; }
+.pasos-precio { text-align: center; margin: 26px 0 0; }
+.precio-grande { font-size: 1.3rem; }
+.por-persona { font-style: italic; color: var(--tinta-suave); }
+.incluye { text-align: center; font-style: italic; margin: 8px auto 0; max-width: 28em; color: var(--tinta-suave); }
+
+.mapa { margin-top: 30px; padding-top: 6px; border-top: 1px solid var(--laton); scroll-margin-top: 56px; }
+.mapa-ayuda { text-align: center; font-family: var(--sans); font-size: .74rem; color: var(--tinta-suave); margin: 0 0 10px; }
+.mapa-cuerpo { display: grid; gap: 12px; }
+.mapa-dibujo { max-width: 360px; margin: 0 auto; width: 100%; }
+.mapa-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.depto { fill: transparent; stroke: var(--tinta); stroke-opacity: .55; stroke-width: .8; stroke-linejoin: round; transition: fill var(--lento); }
+.depto-activo { fill: var(--mora-velo); cursor: pointer; }
+.depto-activo:hover { fill: rgba(168, 139, 90, .22); }
+.depto-activo.seleccionado { fill: var(--mora); stroke: var(--mora); stroke-opacity: 1; }
+.depto-activo:focus { outline: none; }
+.depto-activo:focus-visible { stroke: var(--foco); stroke-width: 2.4; stroke-opacity: 1; }
+.depto-nombre { font-family: var(--sans); font-size: 10.5px; letter-spacing: .06em; text-anchor: middle; fill: var(--tinta); pointer-events: none; paint-order: stroke; stroke: var(--fondo); stroke-width: 3px; }
+.rosa path { fill: none; stroke: var(--laton); stroke-width: .9; }
+.rosa text { font-family: var(--serif); font-size: 12px; text-anchor: middle; fill: var(--laton-texto); }
+.chips { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; padding: 0; }
+.chip {
+  min-height: 44px; padding: 0 14px; cursor: pointer; background: none; border: 1px solid var(--linea); border-radius: 22px;
+  font-family: var(--sans); font-size: .72rem; letter-spacing: .06em;
+}
+.chip[aria-pressed="true"] { background: var(--mora); border-color: var(--mora); color: var(--fondo); }
+.panel { margin-top: 10px; padding: 16px 18px; border: 1px solid var(--laton); min-height: 84px; }
+.panel-vacio { margin: 0; font-style: italic; color: var(--tinta-suave); text-align: center; }
+.panel-titulo { margin: 0 0 6px; font-family: var(--script); font-weight: 400; font-size: 2.2rem; line-height: 1.1; color: var(--mora); }
+.panel-productos { margin: 0; padding-left: 18px; }
+.panel-productos li::marker { color: var(--laton); }
+.lugar { font-style: italic; color: var(--tinta-suave); }
+.ig { font-family: var(--sans); font-size: .62rem; letter-spacing: .14em; text-decoration: none; border: 1px solid var(--laton); padding: 1px 5px; color: var(--laton-texto); vertical-align: 2px; }
+.panel-etiqueta { margin: 14px 0 0; font-family: var(--sans); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; color: var(--laton-texto); }
+.panel-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 16px; }
+.panel-links a { display: inline-block; padding: 10px 0; min-height: 44px; }
+.mapa-nota { text-align: center; font-family: var(--sans); font-size: .7rem; color: var(--tinta-suave); margin: 14px 0 0; }
+
+/* ---------- próximamente ---------- */
+.prox-lista { list-style: none; margin: 18px 0 0; padding: 0; text-align: center; }
+.prox-lista li { padding: 10px 0; border-bottom: 1px solid var(--linea); font-size: 1.2rem; }
+.prox-lista li:last-child { border-bottom: 0; }
+
+/* ---------- pie ---------- */
+.pie { max-width: 640px; margin: 40px auto 0; padding: 28px 16px 48px; border-top: 1px solid var(--laton); text-align: center; }
+.pie p { margin: 8px 0 0; }
+.pie-bloque { padding: 10px 0 22px; }
+.pie .ornamento { margin: 10px auto 16px; }
+.botones { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 14px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; cursor: pointer;
+  background: none; border: 1px solid var(--mora); color: var(--mora); text-decoration: none;
+  font-family: var(--sans); font-size: .72rem; letter-spacing: .1em;
+}
+.aviso { font-family: var(--sans); font-size: .74rem; color: var(--tinta-suave); font-style: normal; }
+.horarios { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; text-align: left; max-width: 360px; margin: 10px auto 0; font-size: 1.02rem; }
+.horarios dt { font-family: var(--sans); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--laton-texto); padding-top: 4px; }
+.horarios dd { margin: 0; font-variant-numeric: tabular-nums lining-nums; }
+address { font-style: normal; }
+.pie a { display: inline-block; padding: 10px 0; }
+.falasco { font-style: italic; color: var(--tinta-suave); }
+.legal { font-family: var(--sans); font-size: .7rem; letter-spacing: .06em; color: var(--tinta-suave); padding-top: 14px; border-top: 1px solid var(--linea); }
+.arriba a { font-family: var(--sans); font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; }
+
+@media (min-width: 720px) {
+  .marca-mora { font-size: 7rem; }
+  .mapa-cuerpo { grid-template-columns: 1fr 1fr; align-items: start; }
+  .foto-ancha { margin: 0 0 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
