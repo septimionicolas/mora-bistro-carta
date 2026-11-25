@@ -8,6 +8,68 @@
   <meta name="description" content="Carta de Mora Bistró Argentino, en Sheraton Tucumán. Cocina tucumana de producto, en español, inglés y portugués.">
   <meta name="theme-color" content="#0E0C0B">
   <meta name="color-scheme" content="dark light">
+  <link rel="preload" as="image" href="logo-mora.png">
+  <style>
+    /* Loader de Mora: CSS crítico, se ve antes de cualquier script. Si el JS falla, se va solo a los 5 s. */
+    #mora-loader {
+      position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
+      background-color: #0A0807; color: #F3EEE4;
+      transition: background-color 700ms ease, opacity 500ms ease, visibility 0s linear 0s;
+      animation: loaderFuera .6s ease 5s forwards !important;
+    }
+    @keyframes loaderFuera { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+    .loader-centro { display: flex; flex-direction: column; align-items: center; width: min(78vw, 420px); }
+    .loader-logo {
+      position: relative; width: 100%; aspect-ratio: 900 / 336; background: rgba(243, 238, 228, .07);
+      -webkit-mask: url("logo-mora.png") center / contain no-repeat; mask: url("logo-mora.png") center / contain no-repeat;
+      transform-origin: 0 0; will-change: transform;
+    }
+    .loader-tinta, .loader-luz { position: absolute; inset: 0; }
+    .loader-tinta {
+      background: #F3EEE4; clip-path: inset(0 100% 0 0);
+      animation: loaderTrazo 1.25s cubic-bezier(.55, .1, .35, 1) .15s forwards;
+      transition: background-color 700ms ease;
+    }
+    .loader-luz {
+      left: -40%; width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(217, 180, 108, .25) 35%, #F6D9A0 62%, #D9B46C 75%, transparent);
+      animation: loaderLuz 1.25s cubic-bezier(.55, .1, .35, 1) .15s forwards;
+    }
+    @keyframes loaderTrazo { to { clip-path: inset(0 0 0 0); } }
+    @keyframes loaderLuz { 0% { transform: translateX(0); opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(350%); opacity: 0; } }
+    .loader-linea { position: relative; width: 132px; height: 1px; margin-top: 26px; background: rgba(217, 180, 108, .18); overflow: hidden; }
+    .loader-linea i {
+      position: absolute; inset: 0; background: #D9B46C; box-shadow: 0 0 8px #D9B46C;
+      transform: scaleX(0); transform-origin: 0 50%;
+      animation: loaderLlenar 3.2s cubic-bezier(.2, .7, .3, 1) .3s forwards; transition: transform 300ms ease;
+    }
+    @keyframes loaderLlenar { to { transform: scaleX(.92); } }
+    .loader-texto {
+      margin: 16px 0 0; font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif; font-size: .62rem; font-weight: 500;
+      letter-spacing: .46em; text-indent: .46em; text-transform: uppercase; color: rgba(243, 238, 228, .72);
+      opacity: 0; animation: loaderAparece .9s ease .85s forwards; transition: opacity 400ms ease;
+    }
+    @keyframes loaderAparece { to { opacity: 1; } }
+    .loader-hotel:empty { display: none; }
+    .loader-hotel { margin-top: 14px; height: 28px; }
+    .loader-hotel svg { height: 100%; width: auto; }
+    #mora-loader.sale { background-color: rgba(10, 8, 7, 0); pointer-events: none; }
+    #mora-loader.sale .loader-linea, #mora-loader.sale .loader-texto, #mora-loader.sale .loader-hotel { opacity: 0; animation: none; transition: opacity 300ms ease; }
+    /* al salir el trazo queda completo aunque el barrido no haya terminado */
+    #mora-loader.sale .loader-tinta { animation: none; clip-path: none; }
+    #mora-loader.sale .loader-luz { display: none; }
+    #mora-loader.sale .loader-logo { transition: transform 900ms cubic-bezier(.65, 0, .25, 1); }
+    #mora-loader.sale.fundido { opacity: 0; }
+    #mora-loader.lleno .loader-linea i { animation: none; transform: scaleX(1); }
+    html.cargando-mora { overflow: hidden; }
+    @media (prefers-reduced-motion: reduce) {
+      .loader-tinta { clip-path: none; animation: none; }
+      .loader-luz { display: none; }
+      .loader-linea i { animation: none; transform: scaleX(1); }
+      .loader-texto { animation: none; opacity: 1; }
+      #mora-loader.sale { opacity: 0; transition: opacity 250ms ease !important; }
+    }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -33,13 +95,64 @@
   <script src="fondo.js" defer></script>
 </head>
 <body>
+  <div id="mora-loader" aria-hidden="true">
+    <div class="loader-centro">
+      <div class="loader-logo"><span class="loader-tinta"></span><span class="loader-luz"></span></div>
+      <div class="loader-linea"><i></i></div>
+      <p class="loader-texto">en Sheraton Tucumán</p>
+      <!-- lugar para el logo oficial del hotel cuando lo entreguen -->
+      <div class="loader-hotel"></div>
+    </div>
+  </div>
+  <script>
+    /* Loader: se va cuando carga el primer modelo 3D de la portada (mora:modelo-listo), nunca antes de 1,4 s
+       ni después de 3,5 s. ?loader=0 lo saltea. Al salir, el logo viaja a su lugar en la portada. */
+    (function () {
+      var el = document.getElementById('mora-loader'), raiz = document.documentElement;
+      var q = new URLSearchParams(location.search);
+      if (q.get('loader') === '0') { el.parentNode.removeChild(el); return; }
+      var lang = q.get('lang'), g = null;
+      try { g = localStorage.getItem('mora-lang'); } catch (e) {}
+      lang = /^(es|en|pt)$/.test(lang) ? lang : (/^(es|en|pt)$/.test(g) ? g : String((navigator.languages || [navigator.language || 'es'])[0]).slice(0, 2));
+      var pre = { en: 'at', pt: 'no' }[lang];
+      if (pre) el.querySelector('.loader-texto').textContent = pre + ' Sheraton Tucumán';
+      raiz.classList.add('cargando-mora');
+      var t0 = Date.now(), MIN = 1400, MAX = 3500, hecho = false;
+      var reducido = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function quitar() {
+        raiz.classList.remove('logo-en-vuelo');
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }
+      function salir() {
+        if (hecho) return; hecho = true;
+        el.classList.add('lleno');
+        var logo = el.querySelector('.loader-logo'), destino = document.querySelector('.portada-logo .logo');
+        var a = logo.getBoundingClientRect(), b = destino && destino.getBoundingClientRect();
+        var vuela = !reducido && b && b.width > 0 && b.top >= 0 && b.bottom <= innerHeight;
+        raiz.classList.remove('cargando-mora');
+        if (vuela) {
+          raiz.classList.add('logo-en-vuelo');
+          if (raiz.getAttribute('data-theme') === 'light') el.querySelector('.loader-tinta').style.backgroundColor = '#4B1D3A';
+          el.classList.add('sale');
+          logo.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px) scale(' + (b.width / a.width) + ')';
+          setTimeout(quitar, 950);
+        } else {
+          el.classList.add('sale', 'fundido');
+          setTimeout(quitar, reducido ? 300 : 550);
+        }
+      }
+      function listo() { setTimeout(salir, Math.max(0, MIN - (Date.now() - t0))); }
+      document.addEventListener('mora:modelo-listo', listo);
+      if (window.__moraModeloListo) listo();
+      setTimeout(salir, MAX);
+    })();
+  </script>
   <div class="fondo-quieto" aria-hidden="true"></div>
   <canvas id="fondo" aria-hidden="true"></canvas>
-  <a class="saltar" href="#carta">Ir a la carta</a>
+  <a class="saltar" href="#menu">Ir a la carta</a>
 
   <header class="cabecera portada" id="inicio">
     <div class="barra">
-      <h1 class="barra-logo"><span class="logo" role="img" aria-label="Mora Bistró Argentino"></span></h1>
       <div class="idiomas" id="idiomas" role="group" aria-label="Idioma">
         <button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button>
         <span aria-hidden="true">·</span>
@@ -47,6 +160,11 @@
         <span aria-hidden="true">·</span>
         <button type="button" data-lang="pt" lang="pt" aria-pressed="false">PT</button>
       </div>
+    </div>
+
+    <div class="portada-marca">
+      <h1 class="portada-logo"><span class="logo" role="img" aria-label="Mora Bistró Argentino"></span></h1>
+      <p class="portada-bajada">Bistró argentino <span aria-hidden="true">·</span> Sheraton Tucumán</p>
     </div>
 
     <section class="destacados" id="destacados" aria-roledescription="carrusel" aria-label="Productos destacados">
@@ -72,14 +190,16 @@
     </section>
 
     <p class="ahora" id="ahora" aria-live="polite"></p>
-    <span class="bajar" aria-hidden="true"></span>
+    <a class="bajar" href="#menu" aria-label="Ir a la carta" tabindex="-1"></a>
   </header>
 
   <nav class="nav" id="nav" aria-label="Secciones de la carta">
+    <a class="nav-logo" href="#inicio" tabindex="-1" aria-hidden="true"><span class="logo" role="img" aria-label="Mora Bistró Argentino"></span></a>
     <ul></ul>
   </nav>
 
   <main>
+    <section class="indice-carta" id="menu" aria-labelledby="t-menu"></section>
     <div id="filtros"></div>
     <div id="carta">
       <noscript><p class="nota-centro">Esta carta necesita JavaScript activado para mostrarse.</p></noscript>

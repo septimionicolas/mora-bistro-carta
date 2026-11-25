@@ -17,6 +17,12 @@
   function $(s) { return raiz.querySelector(s); }
 
   var escena = $('.escena'), visor = $('.visor'), ficha = $('.ficha'), puntos = $('.carrusel-puntos');
+  /* El loader de index.html espera el primer modelo (o su falta) para irse. */
+  function avisarListo() {
+    if (window.__moraModeloListo) return;
+    window.__moraModeloListo = true;
+    document.dispatchEvent(new CustomEvent('mora:modelo-listo'));
+  }
   var btnCarta = $('.btn-carta'), btnMesa = $('.btn-mesa'), ilustrativo = $('.ilustrativo');
 
   var q = parseInt(new URLSearchParams(location.search).get('destacado'), 10);
@@ -42,9 +48,9 @@
     mv.className = 'mv';
     mv.addEventListener('load', function () {
       mv.dataset.cargado = mv.getAttribute('src');
-      if (mv === mvs[frente]) { escena.classList.remove('cargando'); revisarAR(); }
+      if (mv === mvs[frente]) { escena.classList.remove('cargando'); revisarAR(); avisarListo(); }
     });
-    mv.addEventListener('error', function () { if (mv === mvs[frente]) escena.classList.add('sin-modelo'); });
+    mv.addEventListener('error', function () { if (mv === mvs[frente]) { escena.classList.add('sin-modelo'); avisarListo(); } });
     visor.appendChild(mv);
     return mv;
   }
@@ -74,7 +80,7 @@
   }
 
   function iniciarVisores() {
-    if (!window.MoraAR || !window.MoraAR.precargar) { escena.classList.add('sin-modelo'); return; }
+    if (!window.MoraAR || !window.MoraAR.precargar) { escena.classList.add('sin-modelo'); avisarListo(); return; }
     escena.classList.add('cargando');
     window.MoraAR.precargar().then(function () {
       mvs = [crearVisor(), crearVisor()];
@@ -84,7 +90,7 @@
       /* El siguiente se pide cuando el primero ya está en pantalla, para no competir por la red. */
       var primero = function () { mvs[0].removeEventListener('load', primero); precargarSiguiente(); };
       mvs[0].addEventListener('load', primero);
-    }).catch(function () { escena.classList.remove('cargando'); escena.classList.add('sin-modelo'); });
+    }).catch(function () { escena.classList.remove('cargando'); escena.classList.add('sin-modelo'); avisarListo(); });
   }
 
   /* ---------- textos ---------- */
@@ -101,8 +107,7 @@
     ficha.setAttribute('aria-label', T('destacado')(actual + 1, n));
     $('.flecha-ant').setAttribute('aria-label', T('anterior'));
     $('.flecha-sig').setAttribute('aria-label', T('siguiente'));
-    var logo = document.querySelector('.barra .logo');
-    if (logo) logo.setAttribute('aria-label', T('logo'));
+    document.querySelectorAll('.portada-logo .logo, .nav-logo .logo').forEach(function (l) { l.setAttribute('aria-label', T('logo')); });
     puntos.querySelectorAll('button').forEach(function (b, i) {
       b.setAttribute('aria-label', T('destacado')(i + 1, n) + ' · ' + tr(lista[i].nombre));
       b.setAttribute('aria-current', i === actual ? 'true' : 'false');

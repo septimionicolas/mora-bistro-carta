@@ -22,6 +22,16 @@
   }
   function aMin(hhmm) { var p = hhmm.split(':'); return +p[0] * 60 + +p[1]; }
   var ROMANOS = ['I', 'II', 'III', 'IV'];
+  /* Textos del índice «La carta» (la interfaz; los datos de menu.js no se tocan). */
+  var TEXTOS_INDICE = {
+    es: { navCarta: 'Carta', titulo: 'La carta', bajada: 'Elija por dónde empezar', marca: 'Bistró argentino', saltar: 'Ir a la carta', pasos: 'Menú de 4 pasos', prox: 'Próximamente',
+      platos: function (n) { return n === 1 ? '1 plato' : n + ' platos'; }, bebidas: function (n) { return n + ' bebidas'; } },
+    en: { navCarta: 'Menu', titulo: 'The menu', bajada: 'Choose where to begin', marca: 'Argentine bistro', saltar: 'Skip to the menu', pasos: '4-course menu', prox: 'Coming soon',
+      platos: function (n) { return n === 1 ? '1 dish' : n + ' dishes'; }, bebidas: function (n) { return n + ' drinks'; } },
+    pt: { navCarta: 'Cardápio', titulo: 'O cardápio', bajada: 'Escolha por onde começar', marca: 'Bistrô argentino', saltar: 'Ir ao cardápio', pasos: 'Menu de 4 passos', prox: 'Em breve',
+      platos: function (n) { return n === 1 ? '1 prato' : n + ' pratos'; }, bebidas: function (n) { return n + ' bebidas'; } }
+  };
+  function ti(clave) { return TEXTOS_INDICE[estado.lang][clave]; }
   var $ = function (sel) { return document.querySelector(sel); };
 
   /* ---------- idioma ---------- */
@@ -275,16 +285,36 @@
     var a = servicioActual(), nombre = t('servicios')[a.s.id];
     if (a.abierto) {
       return '<span class="ahora-etiqueta">' + esc(t('ahora')) + ':</span> ' + esc(nombre.toLowerCase()) + ' · ' + esc(t('hasta')) + ' ' + a.hasta +
-        ' <a class="ahora-link" href="#' + a.s.seccion + '">' + esc(t('verServicio')) + '</a>';
+        ' <a class="ahora-link" href="#menu">' + esc(t('verServicio')) + '</a>';
     }
     return '<span class="ahora-etiqueta">' + esc(t('cerrado')) + '</span> · ' + esc(t('abre')) + ' ' + esc(nombre.toLowerCase()) + ' ' + a.s.desde;
   }
 
   function navItems() {
-    var items = [{ id: 'tucuman', txt: t('navTucuman') }];
+    var items = [{ id: 'menu', txt: ti('navCarta') }, { id: 'tucuman', txt: t('navTucuman') }];
     SECCIONES.forEach(function (s) { items.push({ id: s.id, txt: tr(s.titulo) }); });
     items.push({ id: 'bebidas', txt: t('navBebidas') }, { id: 'proximamente', txt: t('navProx') });
     return items.map(function (i) { return '<li><a href="#' + i.id + '" data-nav="' + i.id + '">' + esc(i.txt) + '</a></li>'; }).join('');
+  }
+
+  /* ---------- índice «La carta»: tarjetas que llevan a cada sección ---------- */
+  function primeraFoto(items) {
+    for (var i = 0; i < items.length; i++) if (items[i].fotoMini) return items[i].fotoMini;
+    return '';
+  }
+  function tarjeta(href, nombre, cuenta, mini, clase) {
+    var img = mini ? '<img src="' + esc(mini) + '" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.remove(\'con-foto\');this.remove()">' : '';
+    return '<li class="' + (clase || '') + '"><a class="indice-tarjeta' + (mini ? ' con-foto' : '') + '" href="' + href + '">' + img +
+      '<span class="indice-nombre">' + esc(nombre) + '</span><span class="indice-cuenta">' + esc(cuenta) + '</span></a></li>';
+  }
+  function indice() {
+    var nBebidas = BEBIDAS.grupos.reduce(function (n, g) { return n + g.items.length; }, 0);
+    var html = tarjeta('#tucuman', t('tucumanTitulo'), ti('pasos') + ' · ' + precio(MENU_PASOS.precio), primeraFoto(MENU_PASOS.pasos), 'indice-destacada');
+    SECCIONES.forEach(function (s) { html += tarjeta('#' + s.id, tr(s.titulo), ti('platos')(s.items.length), primeraFoto(s.items)); });
+    html += tarjeta('#bebidas', tr(BEBIDAS.titulo), ti('bebidas')(nBebidas), '', 'indice-ancha');
+    PROXIMAMENTE.forEach(function (p) { html += tarjeta('#prox-' + p.id, p[estado.lang], ti('prox'), p.foto ? p.foto.replace(/\.jpg$/, '-s.jpg') : '', 'indice-prox'); });
+    return '<header class="seccion-cabeza indice-cabeza">' + ornamento() + '<h2 id="t-menu" class="titulo-script">' + esc(ti('titulo')) + '</h2>' +
+      '<p class="indice-bajada">' + esc(ti('bajada')) + '</p></header><ul class="indice-grilla">' + html + '</ul>';
   }
 
   function filtros() {
@@ -364,6 +394,11 @@
     });
     $('#nav').setAttribute('aria-label', t('navegacion'));
     $('#nav ul').innerHTML = navItems();
+    $('#menu').innerHTML = indice();
+    var bajar = $('.bajar');
+    if (bajar) bajar.setAttribute('aria-label', ti('titulo'));
+    $('.portada-bajada').innerHTML = esc(ti('marca')) + ' <span aria-hidden="true">·</span> Sheraton Tucumán';
+    $('.saltar').textContent = ti('saltar');
     $('#filtros').innerHTML = filtros();
     $('#carta').innerHTML = tucuman() + SECCIONES.map(seccion).join('') + bebidas() + proximamente();
     $('#pie').innerHTML = pie();
@@ -397,7 +432,7 @@
     observador = new IntersectionObserver(function (entradas) {
       entradas.forEach(function (e) { if (e.isIntersecting) marcarNav(e.target.id); });
     }, { rootMargin: '-35% 0px -60% 0px' });
-    document.querySelectorAll('#carta > .seccion').forEach(function (s) { observador.observe(s); });
+    document.querySelectorAll('#menu, #carta > .seccion').forEach(function (s) { observador.observe(s); });
   }
 
   /* ---------- eventos ---------- */
@@ -405,6 +440,9 @@
     document.addEventListener('click', function (ev) {
       var el = ev.target.closest('button, a, path[data-depto]');
       if (!el) return;
+      if (el.matches('.indice-tarjeta') && !reducido()) {
+        el.classList.remove('brilla'); void el.offsetWidth; el.classList.add('brilla');
+      }
       if (el.matches('#idiomas button')) {
         estado.lang = el.getAttribute('data-lang'); guardar('mora-lang', estado.lang); render(); return;
       }
@@ -451,6 +489,13 @@
     setInterval(function () { $('#ahora').innerHTML = lineaAhora(); aplicarTema(); }, 60000);
   }
 
+  /* El logo chico de la nav aparece cuando el grande de la portada sale de pantalla. */
+  function logoEnNav() {
+    var grande = $('.portada-logo'), nav = $('#nav');
+    if (!grande || !nav || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (e) { nav.classList.toggle('con-logo', !e[0].isIntersecting); }).observe(grande);
+  }
+
   /* Ganchos para la portada (portada.js). */
   window.MoraCarta = { lang: function () { return estado.lang; }, t: t, elegirDepto: elegirDepto, reducido: reducido };
 
@@ -459,4 +504,5 @@
   estado.tema = temaGuardado === 'claro' ? 'claro' : 'oscuro';
   render();
   eventos();
+  logoEnNav();
 })();
