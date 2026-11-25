@@ -1,0 +1,182 @@
+/* Mora Bistró · «Ver en su mesa» (hoja de ar.js) */
+
+.mora-ar {
+  --ar-cuero: #141211;
+  --ar-marfil: #F3EEE4;
+  --ar-laton: #A88B5A;
+  --ar-tenue: rgba(243, 238, 228, 0.62);
+  --ar-linea: rgba(168, 139, 90, 0.35);
+
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--ar-cuero);
+  color: var(--ar-marfil);
+  font: inherit;
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  animation: mora-ar-entrada 280ms ease-out both;
+}
+
+.mora-ar[hidden] { display: none; }
+
+html.mora-ar-abierta,
+html.mora-ar-abierta body { overflow: hidden; }
+
+@keyframes mora-ar-entrada {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mora-ar__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px 12px 20px;
+  border-bottom: 1px solid var(--ar-linea);
+}
+
+.mora-ar__titulo {
+  margin: 0;
+  font: inherit;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.mora-ar__cerrar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ar-marfil);
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.mora-ar__cerrar:hover { border-color: var(--ar-linea); color: var(--ar-laton); }
+
+.mora-ar__escena {
+  position: relative;
+  min-height: 0;
+}
+
+.mora-ar__visor {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  --poster-color: transparent;
+  --progress-bar-color: var(--ar-laton);
+}
+
+.mora-ar__visor:focus { outline: none; }
+.mora-ar__visor:focus-visible { outline: 1px solid var(--ar-linea); outline-offset: -1px; }
+
+.mora-ar__estado {
+  position: absolute;
+  inset: auto 0 50% 0;
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  color: var(--ar-tenue);
+  pointer-events: none;
+}
+
+.mora-ar__estado:empty { display: none; }
+
+.mora-ar__barra {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 50%;
+  margin-bottom: -28px;
+  height: 1px;
+  background: var(--ar-linea);
+  overflow: hidden;
+  transition: opacity 300ms ease;
+}
+
+.mora-ar__barra.es-completa { opacity: 0; }
+
+.mora-ar__barra-relleno {
+  display: block;
+  height: 100%;
+  background: var(--ar-laton);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 200ms linear;
+}
+
+.mora-ar__boton-ar {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  min-height: 48px;
+  padding: 0 28px;
+  border: 1px solid var(--ar-laton);
+  border-radius: 999px;
+  background: rgba(20, 18, 17, 0.72);
+  color: var(--ar-marfil);
+  font: inherit;
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.mora-ar__boton-ar:hover,
+.mora-ar__boton-ar:active { background: var(--ar-laton); color: var(--ar-cuero); }
+
+.mora-ar.sin-ar .mora-ar__boton-ar,
+.mora-ar.es-error .mora-ar__boton-ar { display: none; }
+
+.mora-ar.es-error .mora-ar__visor { visibility: hidden; }
+
+.mora-ar__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--ar-linea);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.mora-ar__aviso { margin: 0; color: var(--ar-tenue); }
+.mora-ar__aviso:empty { display: none; }
+
+.mora-ar__nota {
+  margin: 0;
+  margin-left: auto;
+  color: var(--ar-laton);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mora-ar :focus-visible {
+  outline: 1px solid var(--ar-laton);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mora-ar { animation: none; }
+  .mora-ar *,
+  .mora-ar *::before,
+  .mora-ar *::after { transition: none !important; }
+}

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mora · Ver en su mesa (prueba)</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="ar.css">
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #141211;
+      color: #F3EEE4;
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+    }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; }
+    h1 { font-weight: 400; font-size: 1.6rem; letter-spacing: 0.03em; margin: 0 0 4px; }
+    .bajada { margin: 0 0 24px; color: rgba(243, 238, 228, 0.62); font-size: 0.95rem; }
+    .idiomas { display: flex; gap: 8px; margin-bottom: 28px; }
+    .idiomas button, .plato button {
+      font: inherit; color: #F3EEE4; background: transparent; cursor: pointer;
+      border: 1px solid rgba(168, 139, 90, 0.45); border-radius: 999px;
+    }
+    .idiomas button { padding: 4px 14px; font-size: 0.85rem; letter-spacing: 0.08em; }
+    .idiomas button[aria-pressed="true"] { background: #A88B5A; color: #141211; border-color: #A88B5A; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    .plato {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 16px 0; border-bottom: 1px solid rgba(168, 139, 90, 0.25);
+    }
+    .plato h2 { margin: 0; font-size: 1.05rem; font-weight: 400; }
+    .plato p { margin: 2px 0 0; font-size: 0.85rem; color: rgba(243, 238, 228, 0.62); }
+    .plato button { flex: none; min-height: 44px; padding: 0 18px; font-size: 0.9rem; letter-spacing: 0.04em; }
+    .plato button:hover { border-color: #A88B5A; color: #A88B5A; }
+    :focus-visible { outline: 1px solid #A88B5A; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Ver en su mesa</h1>
+    <p class="bajada">Página de prueba de los modelos 3D. Modelos ilustrativos de Poly Haven (CC0).</p>
+
+    <div class="idiomas" role="group" aria-label="Idioma">
+      <button type="button" data-lang="es" aria-pressed="true">ES</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="pt" aria-pressed="false">PT</button>
+    </div>
+
+    <ul id="lista"></ul>
+  </main>
+
+  <script src="ar.js"></script>
+  <script>
+    (function () {
+      var MODELOS = [
+        { id: 'torta-zanahoria-nueces', titulo: 'Cheesecake de cayote y nueces', sub: 'Modelo: torta de zanahoria y nueces' },
+        { id: 'torta-chocolate-frutillas', titulo: 'Postre de la casa', sub: 'Modelo: torta de chocolate y frutillas' },
+        { id: 'medialuna', titulo: 'Panera y desayuno', sub: 'Modelo: medialuna (croissant)' },
+        { id: 'limon', titulo: 'Limón de Tafí Viejo', sub: 'Modelo: limón' },
+        { id: 'vino-tinto-botella', titulo: 'Malbec de altura', sub: 'Modelo: botella de vino tinto' },
+        { id: 'tabla-madera', titulo: 'Tabla de quesos y embutidos', sub: 'Modelo: tabla de madera (sin fiambres)' }
+      ];
+
+      var lista = document.getElementById('lista');
+      MODELOS.forEach(function (m) {
+        var li = document.createElement('li');
+        li.className = 'plato';
+        li.innerHTML = '<div><h2></h2><p></p></div><button type="button">Ver en 3D</button>';
+        li.querySelector('h2').textContent = m.titulo;
+        li.querySelector('p').textContent = m.sub;
+        li.querySelector('button').addEventListener('click', function () {
+          MoraAR.abrir({
+            src: 'modelos/' + m.id + '.glb',
+            iosSrc: 'modelos/' + m.id + '.usdz',
+            titulo: m.titulo
+          });
+        });
+        lista.appendChild(li);
+      });
+
+      document.querySelectorAll('.idiomas button').forEach(function (b) {
+        b.addEventListener('click', function () {
+          document.documentElement.lang = b.dataset.lang;
+          document.querySelectorAll('.idiomas button').forEach(function (o) {
+            o.setAttribute('aria-pressed', String(o === b));
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

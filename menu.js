@@ -109,7 +109,7 @@ var MENU_PASOS = {
       pt: 'Filé mignon em crosta de limão, risoto de trigo e molho de Malbec de altitude com mirtilos.'
     },
     {
-      id: 'paso-4', origen: ['trancas'], ig_extra: true, foto: 'fotos/cheesecake.jpg', fotoMini: 'fotos/cheesecake-s.jpg', modelo: '',
+      id: 'paso-4', origen: ['trancas'], ig_extra: true, foto: 'fotos/cheesecake.jpg', fotoMini: 'fotos/cheesecake-s.jpg', modelo: 'modelos/torta-zanahoria-nueces.glb', modeloIos: 'modelos/torta-zanahoria-nueces.usdz', // modelo de ejemplo (torta de nueces), reemplazar por el plato real
       es: 'Cheesecake de cayote y nueces, con miel de caña IG.',
       en: 'Cayote and walnut cheesecake with sugar-cane honey (PGI). Cayote is an Andean squash traditionally candied in the north.',
       pt: 'Cheesecake de caiote e nozes, com melado de cana (IG). O caiote é uma abóbora andina, tradicionalmente cristalizada no norte.'
@@ -120,8 +120,8 @@ var MENU_PASOS = {
     en: 'Includes a glass of wine from Tucumán wineries in the Calchaquí Valleys (Finca la Orilla, Los Zazos, Río de Arena) and a soft drink.',
     pt: 'Inclui uma taça de vinho de vinícolas tucumanas dos Vales Calchaquíes (Finca la Orilla, Los Zazos, Río de Arena) e uma bebida sem álcool.'
   },
-  fotoAmbiente: 'fotos/tafi-del-valle.jpg',
-  fotoCopa: 'fotos/copa-vino.jpg'
+  fotoAmbiente: 'fotos/paisaje-tucuman.jpg',
+  fotoCopa: 'fotos/copa-de-vino.jpg'
 };
 
 /* Maridajes por estilo (sin etiquetas). Todos maridaje_propuesto: true. */
@@ -156,14 +156,14 @@ var SECCIONES = [
         desc: { es: 'Con queso cremoso y fritillo.',
                 en: 'Creamed fresh corn, a northern Argentine classic, with soft cheese and fritillo, a paprika and onion sofrito.',
                 pt: 'Creme de milho verde, clássico do norte argentino, com queijo cremoso e fritillo, refogado de cebola e páprica.' } },
-      { id: 'mollejas', precio: 24500, foto: 'fotos/mollejas.jpg', fotoMini: 'fotos/mollejas-s.jpg', modelo: '',
+      { id: 'mollejas', precio: 24500, modelo: '',
         maridaje: M.torrontes, maridaje_propuesto: true,
         nombre: { es: 'Mollejas a la plancha', en: 'Griddled sweetbreads', pt: 'Mollejas na chapa' },
         desc: { es: 'Con crema de verdeo y papas pay.',
                 en: 'With spring onion cream and shoestring potatoes.',
                 pt: 'Timo bovino na chapa, com creme de cebolinha e batata palha.' } },
       { id: 'provoleta', precio: 28900, tags: ['sintacc'], origen: ['tafi-del-valle'],
-        foto: 'fotos/provoleta.jpg', fotoMini: 'fotos/provoleta-s.jpg', modelo: '',
+        modelo: '',
         maridaje: M.malbec, maridaje_propuesto: true,
         nombre: { es: 'Provoleta de Tafí rebozada', en: 'Crumbed Tafí provoleta', pt: 'Provoleta de Tafí empanada' },
         desc: { es: 'Queso de Tafí del Valle rebozado, con mermelada de pimientos picantes.',
@@ -179,7 +179,7 @@ var SECCIONES = [
         nombre: { es: 'Puerro y papas', en: 'Leek and potato', pt: 'Alho-poró e batata' },
         desc: { es: '', en: '', pt: '' } },
       // La carta marca esta sopa como vegana, pero la descripción dice «crema»: no se marca vegana. // confirmar con cocina
-      { id: 'sopa-calabaza', precio: 16000, tags: ['sintacc'], foto: 'fotos/sopa-calabaza.jpg', fotoMini: 'fotos/sopa-calabaza-s.jpg', modelo: '',
+      { id: 'sopa-calabaza', precio: 16000, tags: ['sintacc'], foto: 'fotos/sopa-crema-de-calabaza.jpg', fotoMini: 'fotos/sopa-crema-de-calabaza-s.jpg', modelo: '',
         nombre: { es: 'Crema de calabaza asada', en: 'Roasted squash velouté', pt: 'Creme de abóbora assada' },
         desc: { es: 'Zapallo cabutia asado, terminado con crema.',
                 en: 'Roasted kabocha squash, finished with cream.',
@@ -256,7 +256,7 @@ var SECCIONES = [
         desc: { es: 'De jamón crudo y queso, con milhojas de zapallo coreano y salsa de espinacas.',
                 en: 'Filled with prosciutto and cheese, with a Korean squash mille-feuille and spinach sauce.',
                 pt: 'Recheado com presunto cru e queijo, mil-folhas de abóbora coreana e molho de espinafre.' } },
-      { id: 'salmon', precio: 58000, foto: 'fotos/salmon.jpg', fotoMini: 'fotos/salmon-s.jpg', modelo: '',
+      { id: 'salmon', precio: 58000, foto: 'fotos/salmon-rosado.jpg', fotoMini: 'fotos/salmon-rosado-s.jpg', modelo: '',
         maridaje: M.pinot, maridaje_propuesto: true,
         nombre: { es: 'Salmón rosado', en: 'Pink salmon', pt: 'Salmão rosado' },
         desc: { es: 'Con risotto de leche y salsa cítrica.',
@@ -291,7 +291,7 @@ var SECCIONES = [
     id: 'compartir',
     titulo: { es: 'Para compartir', en: 'To share', pt: 'Para compartilhar' },
     items: [
-      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos.jpg', fotoMini: 'fotos/tabla-quesos-s.jpg', modelo: '',
+      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos-embutidos.jpg', fotoMini: 'fotos/tabla-quesos-embutidos-s.jpg', modelo: '',
         maridaje: M.torrontes, maridaje_propuesto: true,
         nombre: { es: 'Tabla de quesos y embutidos regionales', en: 'Regional cheese and cold cuts board', pt: 'Tábua de queijos e frios regionais' },
         desc: { es: '', en: '', pt: '' } }
@@ -397,7 +397,7 @@ var BEBIDAS = {
 
 var PROXIMAMENTE = [
   { id: 'postres', es: 'Postres', en: 'Desserts', pt: 'Sobremesas' },
-  { id: 'vinos', es: 'Carta de vinos', en: 'Wine list', pt: 'Carta de vinhos', foto: 'fotos/copa-vino.jpg' },
+  { id: 'vinos', es: 'Carta de vinos', en: 'Wine list', pt: 'Carta de vinhos', foto: 'fotos/copa-de-vino.jpg' },
   { id: 'cafeteria', es: 'Cafetería', en: 'Coffee', pt: 'Cafeteria' },
   { id: 'desayuno', es: 'Desayuno', en: 'Breakfast', pt: 'Café da manhã' }
 ];

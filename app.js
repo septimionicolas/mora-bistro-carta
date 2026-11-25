@@ -244,7 +244,7 @@
         esc(NOMBRES_DEPTO[id]) + '</button></li>';
     }).join('');
     return '<section class="seccion tucuman" id="tucuman" aria-labelledby="t-tucuman">' +
-      foto(mp.fotoAmbiente, mp.fotoAmbiente.replace('.jpg', '-s.jpg'), 'Tafí del Valle', 'foto-ancha') +
+      foto(mp.fotoAmbiente, mp.fotoAmbiente.replace('.jpg', '-s.jpg'), 'Cerros de Tucumán', 'foto-ancha') +
       '<header class="seccion-cabeza">' + ornamento() +
       '<p class="sobretitulo">' + esc(t('tucumanBajada')) + '</p>' +
       '<h2 id="t-tucuman" class="titulo-script titulo-grande">' + esc(t('tucumanTitulo')) + '</h2>' +
