@@ -106,7 +106,7 @@ var MENU_PASOS = {
       pt: 'Empanada frita de matambre (corte bovino fino, típico argentino), com suco de limão.'
     },
     {
-      id: 'paso-3', origen: ['trancas', 'tafi-viejo', 'graneros', 'tafi-del-valle', 'lules'],
+      id: 'paso-3', foto: 'fotos/menu-de-pasos.jpg', fotoMini: 'fotos/menu-de-pasos-s.jpg', origen: ['trancas', 'tafi-viejo', 'graneros', 'tafi-del-valle', 'lules'],
       es: 'Lomo con costra de limón, risotto de trigo y salsa Malbec de vino de altura con arándanos.',
       en: 'Beef tenderloin in a lemon crust, wheat risotto and a high-altitude Malbec sauce with blueberries.',
       pt: 'Filé mignon em crosta de limão, risoto de trigo e molho de Malbec de altitude com mirtilos.'
@@ -152,12 +152,12 @@ var SECCIONES = [
       { id: 'empanada-queso', precio: 4600,
         nombre: { es: 'Empanada de queso, cebolla y aceitunas', en: 'Cheese, onion and olive empanada', pt: 'Empanada de queijo, cebola e azeitonas' },
         desc: { es: '', en: '', pt: '' } },
-      { id: 'humita', precio: 15000, tags: ['sintacc'],
+      { id: 'humita', foto: 'fotos/humita.jpg', fotoMini: 'fotos/humita-s.jpg', precio: 15000, tags: ['sintacc'],
         nombre: { es: 'Humita', en: 'Humita', pt: 'Humita' },
         desc: { es: 'Con queso cremoso y fritillo.',
                 en: 'Creamed fresh corn, a northern Argentine classic, with soft cheese and fritillo, a paprika and onion sofrito.',
                 pt: 'Creme de milho verde, clássico do norte argentino, com queijo cremoso e fritillo, refogado de cebola e páprica.' } },
-      { id: 'mollejas', precio: 24500, modelo: '',
+      { id: 'mollejas', foto: 'fotos/mollejas.jpg', fotoMini: 'fotos/mollejas-s.jpg', precio: 24500, modelo: '',
         maridaje: M.torrontes, maridaje_propuesto: true,
         nombre: { es: 'Mollejas a la plancha', en: 'Griddled sweetbreads', pt: 'Mollejas na chapa' },
         desc: { es: 'Con crema de verdeo y papas pay.',
@@ -235,7 +235,7 @@ var SECCIONES = [
         desc: { es: 'Con puré aligot y demi-glace.',
                 en: 'With aligot (cheese and potato purée) and demi-glace.',
                 pt: 'Com purê aligot (batata com queijo) e demi-glace.' } },
-      { id: 'milanesa', precio: 39000, maridaje: M.bonarda, maridaje_propuesto: true,
+      { id: 'milanesa', foto: 'fotos/milanesa.jpg', fotoMini: 'fotos/milanesa-s.jpg', precio: 39000, maridaje: M.bonarda, maridaje_propuesto: true,
         nombre: { es: 'Milanesa de ojo de bife a la napolitana', en: 'Ribeye milanesa napolitana', pt: 'Milanesa de ribeye à napolitana' },
         desc: { es: 'Con papas al ajillo.',
                 en: 'Breaded ribeye topped with ham, tomato sauce and melted cheese, with garlic potatoes.',
@@ -327,7 +327,7 @@ var SECCIONES = [
         desc: { es: 'Azul, gruyère, sardo y ricota, con crema de limón.',
                 en: 'Blue cheese, Gruyère, sardo (an Argentine aged cheese) and ricotta, with lemon cream.',
                 pt: 'Queijo azul, gruyère, sardo (queijo curado argentino) e ricota, com creme de limão.' } },
-      { id: 'agnolotis', precio: 18500, maridaje: M.malbec, maridaje_propuesto: true,
+      { id: 'agnolotis', foto: 'fotos/agnolotis.jpg', fotoMini: 'fotos/agnolotis-s.jpg', precio: 18500, maridaje: M.malbec, maridaje_propuesto: true,
         nombre: { es: 'Agnolotis de cabrito braseado', en: 'Braised kid goat agnolotti', pt: 'Agnolotti de cabrito braseado' },
         desc: { es: 'Con demi-glace.', en: 'With demi-glace.', pt: 'Com demi-glace.' } },
       { id: 'risotto-mar', precio: 29000, foto: 'fotos/risotto-de-mar.jpg', fotoMini: 'fotos/risotto-de-mar-s.jpg', modelo: '',
@@ -348,6 +348,7 @@ var SECCIONES = [
 
 /* Bebidas. Las de sin alcohol y cervezas salen de una foto movida («precios aprox.»): verificar: true. */
 var BEBIDAS = {
+  fotoMini: 'fotos/bebidas-s.jpg', /* foto de la tarjeta del índice; si el archivo no está, la tarjeta queda sin foto */
   id: 'bebidas',
   titulo: { es: 'Bebidas', en: 'Drinks', pt: 'Bebidas' },
   grupos: [

@@ -297,7 +297,7 @@
     var nBebidas = BEBIDAS.grupos.reduce(function (n, g) { return n + g.items.length; }, 0);
     var html = SECCIONES.map(function (s) { return tarjeta('#' + s.id, tr(s.titulo), ti('platos')(s.items.length), primeraFoto(s.items)); }).join('');
     html += tarjeta('#tucuman', t('tucumanTitulo'), ti('pasos') + ' · ' + precio(MENU_PASOS.precio), primeraFoto(MENU_PASOS.pasos));
-    html += tarjeta('#bebidas', tr(BEBIDAS.titulo), ti('bebidas')(nBebidas), '');
+    html += tarjeta('#bebidas', tr(BEBIDAS.titulo), ti('bebidas')(nBebidas), BEBIDAS.fotoMini || '');
     return '<header class="seccion-cabeza indice-cabeza">' + ornamento() + '<h2 id="t-menu" class="titulo-script">' + esc(ti('titulo')) + '</h2>' +
       '<p class="indice-bajada">' + esc(ti('bajada')) + '</p></header><ul class="indice-grilla">' + html + '</ul>' +
       '<p class="indice-3d"><span class="indice-3d-marca" aria-hidden="true">3D</span> ' + esc(ti('tresD')) + '</p>';
