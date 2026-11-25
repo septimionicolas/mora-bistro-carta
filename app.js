@@ -4,7 +4,7 @@
 
   var IDIOMAS = ['es', 'en', 'pt'];
   var params = new URLSearchParams(location.search);
-  var estado = { lang: 'es', tema: 'auto', filtros: [], depto: null };
+  var estado = { lang: 'es', tema: 'oscuro', filtros: [], depto: null };
 
   /* ---------- utilidades ---------- */
   function guardar(clave, valor) { try { localStorage.setItem(clave, valor); } catch (e) { /* modo privado */ } }
@@ -86,18 +86,17 @@
   function temaEfectivo() {
     var q = params.get('tema');
     if (q === 'oscuro' || q === 'claro') return q;
-    if (estado.tema !== 'auto') return estado.tema;
-    var h = ahoraTucuman().hora;
-    return (h >= 19 || h < 7) ? 'oscuro' : 'claro';
+    /* Oscuro a toda hora; marfil sólo si se elige. */
+    return estado.tema === 'claro' ? 'claro' : 'oscuro';
   }
   function aplicarTema() {
     var efectivo = temaEfectivo();
     document.documentElement.setAttribute('data-theme', efectivo === 'oscuro' ? 'dark' : 'light');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', efectivo === 'oscuro' ? '#141211' : '#F3EEE4');
+    if (meta) meta.setAttribute('content', efectivo === 'oscuro' ? '#0E0C0B' : '#F3EEE4');
     var btn = $('#btn-tema');
     if (btn) {
-      var nombre = estado.tema === 'auto' ? t('temaAuto') : (estado.tema === 'oscuro' ? t('temaOscuro') : t('temaClaro'));
+      var nombre = efectivo === 'oscuro' ? t('temaOscuro') : t('temaClaro');
       btn.querySelector('span').textContent = nombre;
       btn.setAttribute('aria-label', t('tema') + ': ' + nombre);
     }
@@ -113,9 +112,9 @@
   function foto(src, mini, alt, clase) {
     if (!src) return '';
     return '<figure class="foto ' + (clase || '') + '">' +
-      '<img src="' + esc(mini || src) + '"' + (mini ? ' srcset="' + esc(mini) + ' 600w, ' + esc(src) + ' 1400w" sizes="(min-width: 720px) 640px, 100vw"' : '') +
+      '<span class="foto-marco"><img src="' + esc(mini || src) + '"' + (mini ? ' srcset="' + esc(mini) + ' 600w, ' + esc(src) + ' 1400w" sizes="(min-width: 720px) 640px, 100vw"' : '') +
       ' width="1400" height="1050" loading="lazy" decoding="async" alt="' + esc(alt) + '"' +
-      ' onerror="this.closest(\'figure\').hidden=true">' +
+      ' onerror="this.closest(\'figure\').hidden=true"></span>' +
       '<figcaption>' + esc(t('ilustrativa')) + '</figcaption></figure>';
   }
 
@@ -369,6 +368,7 @@
     aplicarFiltros();
     if (estado.depto) elegirDepto(estado.depto, true);
     observarSecciones();
+    document.dispatchEvent(new CustomEvent('mora:render'));
   }
 
   /* ---------- sección activa en la nav ---------- */
@@ -380,6 +380,9 @@
       if (act) {
         a.setAttribute('aria-current', 'true');
         var nav = $('#nav ul'), izq = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+        nav.style.setProperty('--ind-x', a.offsetLeft + 'px');
+        nav.style.setProperty('--ind-w', a.offsetWidth + 'px');
+        nav.classList.add('con-indicador');
         nav.scrollTo({ left: Math.max(0, izq), behavior: reducido() ? 'auto' : 'smooth' });
       } else a.removeAttribute('aria-current');
     });
@@ -403,7 +406,8 @@
         estado.lang = el.getAttribute('data-lang'); guardar('mora-lang', estado.lang); render(); return;
       }
       if (el.id === 'btn-tema') {
-        estado.tema = { auto: 'claro', claro: 'oscuro', oscuro: 'auto' }[estado.tema];
+        estado.tema = temaEfectivo() === 'claro' ? 'oscuro' : 'claro';
+        params.delete('tema');
         guardar('mora-tema', estado.tema); aplicarTema(); return;
       }
       if (el.matches('.filtro')) {
@@ -446,7 +450,7 @@
 
   estado.lang = detectarIdioma();
   var temaGuardado = leer('mora-tema');
-  if (temaGuardado === 'claro' || temaGuardado === 'oscuro' || temaGuardado === 'auto') estado.tema = temaGuardado;
+  estado.tema = temaGuardado === 'claro' ? 'claro' : 'oscuro';
   render();
   eventos();
 })();
