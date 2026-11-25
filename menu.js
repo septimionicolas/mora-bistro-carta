@@ -263,7 +263,7 @@ var SECCIONES = [
         desc: { es: 'Con risotto de leche y salsa cítrica.',
                 en: 'With a creamy milk risotto and citrus sauce.',
                 pt: 'Com risoto ao leite e molho cítrico.' } },
-      { id: 'ojo-de-bife', precio: 42000, modelo: 'modelos/ojo-de-bife.glb',
+      { id: 'ojo-de-bife', precio: 42000, modelo: 'modelos/ojo-de-bife.glb', modeloIos: 'modelos/ojo-de-bife.usdz',
         maridaje: M.malbec, maridaje_propuesto: true,
         nombre: { es: 'Ojo de bife', en: 'Ribeye steak', pt: 'Bife ancho' },
         desc: { es: 'Con chimichurri y verduras grilladas.',
@@ -274,7 +274,7 @@ var SECCIONES = [
         desc: { es: 'Lomo en dados, vegetales, salchichas estilo alemán, papas y huevo.',
                 en: 'Diced tenderloin, vegetables, German-style sausages, potatoes and egg.',
                 pt: 'Filé em cubos, legumes, salsichas tipo alemãs, batatas e ovo.' } },
-      { id: 't-bone', precio: 79000, tags: ['compartir'], foto: 'fotos/t-bone.jpg', fotoMini: 'fotos/t-bone-s.jpg', modelo: 'modelos/t-bone.glb',
+      { id: 't-bone', precio: 79000, tags: ['compartir'], foto: 'fotos/t-bone.jpg', fotoMini: 'fotos/t-bone-s.jpg', modelo: 'modelos/t-bone.glb', modeloIos: 'modelos/t-bone.usdz',
         maridaje: M.cabernet, maridaje_propuesto: true,
         nombre: { es: 'T-bone', en: 'T-bone steak', pt: 'T-bone' },
         desc: { es: 'Para compartir. Con papas, vegetales y huevo.',
@@ -292,7 +292,7 @@ var SECCIONES = [
     id: 'compartir',
     titulo: { es: 'Para compartir', en: 'To share', pt: 'Para compartilhar' },
     items: [
-      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos-embutidos.jpg', fotoMini: 'fotos/tabla-quesos-embutidos-s.jpg', modelo: 'modelos/tabla-quesos.glb',
+      { id: 'tabla', precio: 30000, tags: ['sintacc', 'compartir'], foto: 'fotos/tabla-quesos-embutidos.jpg', fotoMini: 'fotos/tabla-quesos-embutidos-s.jpg', modelo: 'modelos/tabla-quesos.glb', modeloIos: 'modelos/tabla-quesos.usdz',
         maridaje: M.torrontes, maridaje_propuesto: true,
         nombre: { es: 'Tabla de quesos y embutidos regionales', en: 'Regional cheese and cold cuts board', pt: 'Tábua de queijos e frios regionais' },
         desc: { es: '', en: '', pt: '' } }
