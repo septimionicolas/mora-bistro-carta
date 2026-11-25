@@ -54,5 +54,37 @@
     "ancho": 1200,
     "alto": 900,
     "ilustrativa": true
+  },
+  {
+    "plato": "Entradas",
+    "archivo": "fotos/entradas.jpg",
+    "mini": "fotos/entradas-s.jpg",
+    "ancho": 1200,
+    "alto": 900,
+    "ilustrativa": true
+  },
+  {
+    "plato": "Bebidas",
+    "archivo": "fotos/bebidas.jpg",
+    "mini": "fotos/bebidas-s.jpg",
+    "ancho": 1200,
+    "alto": 900,
+    "ilustrativa": true
+  },
+  {
+    "plato": "Ojo de bife",
+    "archivo": "fotos/ojo-de-bife.jpg",
+    "mini": "fotos/ojo-de-bife-s.jpg",
+    "ancho": 1200,
+    "alto": 900,
+    "ilustrativa": true
+  },
+  {
+    "plato": "Tomahawk",
+    "archivo": "fotos/tomahawk.jpg",
+    "mini": "fotos/tomahawk-s.jpg",
+    "ancho": 1200,
+    "alto": 900,
+    "ilustrativa": true
   }
 ]
